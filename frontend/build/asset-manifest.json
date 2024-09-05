@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2e905ea8.css",
+    "main.js": "/static/js/main.faaca45f.js",
+    "static/media/5.svg": "/static/media/5.a561fd9c0909a1980e2761d0540a9007.svg",
+    "static/media/index_banner.svg": "/static/media/index_banner.af105b80344817bb1df4a94305278b99.svg",
+    "static/media/4.svg": "/static/media/4.7a38c2515c3dc821de272682e8174c42.svg",
+    "static/media/3.svg": "/static/media/3.d4b0b5e756f352206fab8fa23e8d3b94.svg",
+    "static/media/timetable2.svg": "/static/media/timetable2.54fa6dacee6aca4a2d0e200a11a56f29.svg",
+    "static/media/timetable.svg": "/static/media/timetable.eab2db9f6320957d94c9a3e613fe001a.svg",
+    "static/media/2.svg": "/static/media/2.7cb476f69d95209e14687ae68b723c8d.svg",
+    "static/media/7.svg": "/static/media/7.327a9fbe7572246cc60f48b99199c6f5.svg",
+    "static/media/9.svg": "/static/media/9.d245b410bdd3a0e9a28b389552bc4692.svg",
+    "static/media/1.svg": "/static/media/1.2854f215c7f1bd6be8ee9e0825839403.svg",
+    "static/media/thought.svg": "/static/media/thought.0122fdda74b3f7892a126d9cd0d2430e.svg",
+    "static/media/6.svg": "/static/media/6.5f7c7aefe4482972db25cf438057e002.svg",
+    "static/media/12.svg": "/static/media/12.8cf023857c47219f13c50e934c65825c.svg",
+    "static/media/8.svg": "/static/media/8.a45f6b928c54d53bb104dae77a1dede0.svg",
+    "static/media/10.svg": "/static/media/10.caefc8f65d8ec1e06f8c594f635e132d.svg",
+    "static/media/11.svg": "/static/media/11.833281567c647be9fcdd7903d00446b5.svg",
+    "static/media/poppins-latin-400-normal.woff": "/static/media/poppins-latin-400-normal.1458587c0aa7cd06b82b.woff",
+    "static/media/poppins-latin-400-normal.woff2": "/static/media/poppins-latin-400-normal.405055dd680fa1dcdfa2.woff2",
+    "static/media/poppins-latin-ext-400-normal.woff": "/static/media/poppins-latin-ext-400-normal.cf7e1ed83eb19f7b1ea6.woff",
+    "static/media/poppins-latin-ext-400-normal.woff2": "/static/media/poppins-latin-ext-400-normal.6f94f40f848d79872444.woff2",
+    "index.html": "/index.html",
+    "main.2e905ea8.css.map": "/static/css/main.2e905ea8.css.map",
+    "main.faaca45f.js.map": "/static/js/main.faaca45f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2e905ea8.css",
+    "static/js/main.faaca45f.js"
+  ]
+}
