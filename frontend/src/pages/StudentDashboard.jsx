@@ -1,4 +1,3 @@
-// App.js or parent component
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Container } from '@mui/material';
@@ -7,15 +6,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
-import Hero from '../components/Landing/Hero';
-import Features from '../components/Landing/Features';
-import Pricing from '../components/Landing/Pricing';
-import FAQ from '../components/Landing/FAQ';
-import Team from '../components/Landing/Team';
+import Hero from '../components/Student/Hero';
 import Footer from '../components/Landing/Footer';
+import TrendingPaths from '../components/Student/TrendingPaths';
+import Examinations from '../components/Student/Examinations';
+import AdvisoryNotes from '../components/Student/AdvisoryNotes';
+import LatestNews from '../components/Student/LatestNews';
 
-
-function Landing() {
+function StudentDashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const theme = darkMode ? darkTheme : lightTheme;
 
@@ -31,10 +29,10 @@ function Landing() {
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                 <Hero />
-                <Features />
-                {/* <Pricing /> */}
-                <FAQ />
-                {/* <Team /> */}
+                <TrendingPaths />
+                <Examinations />
+                <LatestNews />
+                <AdvisoryNotes />
                 <Footer />
               </Suspense>
             </Container>
@@ -45,4 +43,4 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default StudentDashboard;

@@ -1,4 +1,3 @@
-// App.js or parent component
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Container } from '@mui/material';
@@ -7,15 +6,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
-import Hero from '../components/Landing/Hero';
-import Features from '../components/Landing/Features';
-import Pricing from '../components/Landing/Pricing';
-import FAQ from '../components/Landing/FAQ';
-import Team from '../components/Landing/Team';
 import Footer from '../components/Landing/Footer';
 
 
-function Landing() {
+// Import the new Intermediate Course Info components
+import StreamsSection from '../components/IntermediateCourse/StreamsSection';
+import ModernCollegeExplorer from '../components/IntermediateCourse/TopCollegesSection';
+import ExamDashboard from '../components/IntermediateCourse/EntranceExamSection.jsx';
+import SessionStats from '../components/IntermediateCourse/StudentTestmonialsComponents.jsx';
+
+
+function IntermediateCourse() {
   const [darkMode, setDarkMode] = useState(false);
   const theme = darkMode ? darkTheme : lightTheme;
 
@@ -30,11 +31,12 @@ function Landing() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <Hero />
-                <Features />
-                {/* <Pricing /> */}
-                <FAQ />
-                {/* <Team /> */}
+                {/* Add the new Intermediate Course Info sections */}
+                <StreamsSection />
+                <ModernCollegeExplorer />
+                <ExamDashboard />
+                <SessionStats />
+
                 <Footer />
               </Suspense>
             </Container>
@@ -45,4 +47,4 @@ function Landing() {
   );
 }
 
-export default Landing;
+export default IntermediateCourse;

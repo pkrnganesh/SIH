@@ -1,10 +1,10 @@
-// components/Hero.js
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
-import referenceImage from './index_banner.svg';
 import CustomButton from './CustomButton'; // Import your custom button component
+import CustomButton2 from './CostomButton2'; // Import your custom button component
+
 
 const FullWidthBox = styled(Box)(({ theme }) => ({
   width: '100vw',
@@ -13,7 +13,7 @@ const FullWidthBox = styled(Box)(({ theme }) => ({
   right: '50%',
   marginLeft: '-50vw',
   marginRight: '-50vw',
-  background: 'linear-gradient(135deg, #42daf5 100%,#FFD700 0%)',
+  background: 'linear-gradient(135deg, #9d50bb 100%,#FFD700 0%)',
   overflow: 'hidden',
 }));
 
@@ -24,6 +24,12 @@ const ContentWrapper = styled(Container)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(15, 4),
   },
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '80vh', // Center content vertically
+  textAlign: 'center',
 }));
 
 const FloatingSymbol = styled(motion.div)(({ theme }) => ({
@@ -57,7 +63,8 @@ const symbols = ['+', '-', '×', '÷', '=', '∑', '∫', 'π', '√', '∞'];
 
 const Hero = () => {
   const [text, setText] = useState('');
-  const fullText = "Ouur user-friendly platform automates attendance tracking, provides detailed analytics, and generates insightful reports.Start your free trial today!";
+  const fullText = "Unlock your potential with personalized career advice, detailed insights, and expert guidance tailored to your goals. Start your journey today!";
+  
   useEffect(() => {
     let index = 0;
     const typingInterval = setInterval(() => {
@@ -72,53 +79,38 @@ const Hero = () => {
     return () => clearInterval(typingInterval);
   }, []);
   
-
   return (
     <FullWidthBox>
       <ContentWrapper maxWidth="xl">
-        <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} alignItems="center" justifyContent="space-between">
-          <Box maxWidth={{ xs: '100%', md: '50%' }} mb={{ xs: 4, md: 0 }}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <motion.div
-                initial={{ perspective: 800, rotateX: 90 }}
-                animate={{ perspective: 800, rotateX: 0 }}
-                transition={{ duration: 1.5 }}
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <Typography variant="h1" component="h1" sx={{ color: 'white', fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' }, lineHeight: 1.2, fontFamily: 'Playfair Display' }}>
-                Attendance
-                Management System                </Typography>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <Typography variant="body1" sx={{ color: 'black', mb: 3, fontSize: '1.2rem', maxWidth: '80%' ,fontFamily:'monospace' }}>
-                  {text}
-                </Typography>
-                <CustomButton /> {/* Replace the existing button with your custom button */}
-              </motion.div>
-            </motion.div>
-          </Box>
-          <Box
-            component={motion.img}
-            src={referenceImage}
-            alt="Person using the app"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            sx={{
-              maxWidth: { xs: '100%', md: '45%' },
-              borderRadius: '15px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-            }}
-          />
-        </Box>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <motion.div
+            initial={{ perspective: 800, rotateX: 90 }}
+            animate={{ perspective: 800, rotateX: 0 }}
+            transition={{ duration: 1.5 }}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <Typography variant="h1" component="h1" sx={{ color: 'white', fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' }, lineHeight: 1.2, fontFamily: 'Playfair Display' }}>
+              Career Guidance
+            </Typography>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <Typography variant="body1" sx={{ color: 'black', mb: 3, fontSize: '1.2rem', maxWidth: '80%' ,fontFamily:'monospace', margin: '0 auto' }}>
+              {text}
+            </Typography>
+            <Box display="flex" justifyContent="center" gap={2} mt={4}>
+              <CustomButton />
+              <CustomButton2 />
+            </Box>
+          </motion.div>
+        </motion.div>
       </ContentWrapper>
       {symbols.map((symbol, index) => (
         <FloatingSymbol
