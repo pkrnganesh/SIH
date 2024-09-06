@@ -81,18 +81,6 @@ const SessionStats = () => {
           </Grid>
         </Box>
         
-        {/* Rating Stats Section */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', mt: 6 }}>
-          {[5.0, 4.9, 4.7, 5.0, 4.6].map((rating, index) => (
-            <Chip
-              key={index}
-              icon={<Star />}
-              label={rating}
-              color="primary"
-              sx={{ borderRadius: '50%', height: 60, width: 60, fontSize: '1.5rem' }}
-            />
-          ))}
-        </Box>
       </Box>
     </motion.div>
   );
