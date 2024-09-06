@@ -8,7 +8,7 @@ const Button = () => {
   const navigate = useNavigate(); // Updated hook
 
   const handleClick = () => {
-    navigate("/uploading"); // Updated route
+    navigate("/student-dashboard"); // Updated route
   };
 
   return (
