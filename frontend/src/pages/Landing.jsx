@@ -33,9 +33,9 @@ function Landing() {
                 <Hero />
 
                 <Features />
-                <Pricing />
+                {/* <Pricing /> */}
                 <FAQ />
-                <Team />
+                {/* <Team /> */}
                 <Footer />
               </Suspense>
             </Container>
