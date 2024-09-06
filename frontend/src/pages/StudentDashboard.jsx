@@ -1,4 +1,3 @@
-// App.js or parent component
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Container } from '@mui/material';

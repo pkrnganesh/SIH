@@ -1,184 +1,344 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Typography, Box, Card, CardContent } from '@mui/material';
-import { styled } from '@mui/system';
-import { motion } from 'framer-motion';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Stepper,
+  Step,
+  StepLabel,
+  IconButton,
+} from '@mui/material';
+import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
+import {
+  Science,
+  Business,
+  Palette,
+  Computer,
+  Engineering,
+  LocalHospital,
+  Gavel,
+  School,
+  Work,
+  TrendingUp,
+  EmojiEvents,
+  Close,
+  ArrowForward,
+} from '@mui/icons-material';
 
-// Styled components for a more attractive design
-const StyledCard = styled(motion(Card))(({ theme }) => ({
+// Custom theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#9d50bb',
+    },
+    background: {
+      default: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: "'Poppins', sans-serif",
+    h2: {
+      fontWeight: 700,
+      fontSize: '2.5rem',
+    },
+    h4: {
+      fontWeight: 600,
+      fontSize: '2rem',
+    },
+    h5: {
+      fontWeight: 600,
+      fontSize: '1.5rem',
+    },
+    h6: {
+      fontWeight: 600,
+      fontSize: '1.2rem',
+    },
+    body1: {
+      fontSize: '1rem',
+    },
+    body2: {
+      fontSize: '0.9rem',
+    },
+  },
+});
+
+const GlassCard = styled(Card)(({ theme }) => ({
   backgroundColor: '#ffffff',
-  borderRadius: '15px',
-  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+  backdropFilter: 'blur(10px)',
+  borderRadius: '20px',
+  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
   overflow: 'hidden',
-  transition: 'all 0.2s ease-in-out',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  cursor: 'pointer',
+  border: '1px solid rgba(157, 80, 187, 0.1)',
+  transition: 'all 0.3s ease-in-out',
   '&:hover': {
-    scale: 1.03,
-    boxShadow: '0 15px 30px rgba(0, 0, 0, 0.15)',
+    transform: 'translateY(-5px)',
+    boxShadow: '0 10px 20px rgba(157, 80, 187, 0.1)',
+    background: 'rgba(157, 80, 187, 0.1)',
   },
 }));
 
-const Logo = styled(motion.img)(({ theme }) => ({
-  width: '80px',
-  height: '80px',
-  marginBottom: theme.spacing(2),
-  transition: 'transform 0.3s ease',
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
 }));
 
-const Background = styled(Box)({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'white',
-  zIndex: -1,
-});
+const streams = {
+  science: {
+    icon: <Science />,
+    paths: [
+      {
+        name: 'Medical',
+        icon: <LocalHospital />,
+        description: 'Pursue a rewarding career in healthcare and medicine',
+        steps: ['11th & 12th (PCB)', 'NEET Exam', 'MBBS', 'Internship', 'Specialization (MD/MS)'],
+        careers: ['General Physician', 'Surgeon', 'Pediatrician', 'Radiologist'],
+      },
+      {
+        name: 'Engineering',
+        icon: <Engineering />,
+        description: 'Innovate and build the future through various engineering fields',
+        steps: ['11th & 12th (PCM)', 'JEE Main/Advanced', 'B.Tech/B.E.', 'Internship', 'M.Tech (optional)'],
+        careers: ['Software Engineer', 'Mechanical Engineer', 'Civil Engineer', 'Electrical Engineer'],
+      },
+      {
+        name: 'Pure Sciences',
+        icon: <School />,
+        description: 'Contribute to scientific advancements through research and academia',
+        steps: ['11th & 12th (PCM/PCB)', 'Entrance Exams', 'B.Sc.', 'M.Sc.', 'Ph.D.'],
+        careers: ['Research Scientist', 'Biochemist', 'Astrophysicist', 'Environmental Scientist'],
+      },
+    ],
+  },
+  commerce: {
+    icon: <Business />,
+    paths: [
+      {
+        name: 'Chartered Accountancy',
+        icon: <TrendingUp />,
+        description: 'Become a financial expert and business consultant',
+        steps: ['11th & 12th (Commerce)', 'CA Foundation', 'CA Intermediate', 'Articleship', 'CA Final'],
+        careers: ['Chartered Accountant', 'Financial Analyst', 'Tax Consultant', 'Auditor'],
+      },
+      {
+        name: 'Business Management',
+        icon: <Work />,
+        description: 'Lead and manage businesses in a global marketplace',
+        steps: ['11th & 12th (Commerce)', 'Entrance Exams (CAT/XAT)', 'BBA', 'Internship', 'MBA'],
+        careers: ['Business Manager', 'Marketing Executive', 'HR Manager', 'Entrepreneur'],
+      },
+      {
+        name: 'Economics',
+        icon: <School />,
+        description: 'Analyze economic trends and shape policies',
+        steps: ['11th & 12th (Commerce)', 'Entrance Exams', 'B.A./B.Sc. Economics', 'Internship', 'M.A./M.Sc. Economics'],
+        careers: ['Economist', 'Policy Analyst', 'Investment Banker', 'Economic Consultant'],
+      },
+    ],
+  },
+  arts: {
+    icon: <Palette />,
+    paths: [
+      {
+        name: 'Law',
+        icon: <Gavel />,
+        description: 'Uphold justice and navigate the complexities of the legal system',
+        steps: ['11th & 12th (Any Stream)', 'CLAT/LSAT', 'B.A. LLB (5 years) or LLB (3 years)', 'Internship', 'LLM (optional)'],
+        careers: ['Corporate Lawyer', 'Criminal Lawyer', 'Judge', 'Legal Consultant'],
+      },
+      {
+        name: 'Media and Journalism',
+        icon: <Computer />,
+        description: 'Shape public opinion and tell compelling stories',
+        steps: ['11th & 12th (Any Stream)', 'Entrance Exams', 'BA Journalism', 'Internship', 'MA Journalism/Mass Comm'],
+        careers: ['Journalist', 'News Anchor', 'Content Strategist', 'Public Relations Specialist'],
+      },
+      {
+        name: 'Fine Arts',
+        icon: <Palette />,
+        description: 'Express creativity and emotions through various art forms',
+        steps: ['11th & 12th (Any Stream)', 'Entrance Exams', 'BFA', 'Internship/Apprenticeship', 'MFA'],
+        careers: ['Artist', 'Graphic Designer', 'Art Director', 'Art Therapist'],
+      },
+    ],
+  },
+};
 
-const AnimatedShape = styled(motion.div)(({ theme }) => ({
-  position: 'absolute',
-  backgroundColor: 'rgba(110, 142, 251, 0.1)',
-  borderRadius: '50%',
-}));
+const CareerExplorer = () => {
+  const [selectedStream, setSelectedStream] = useState(null);
+  const [selectedPath, setSelectedPath] = useState(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-const StreamsSection = () => {
-  const [activeTab, setActiveTab] = useState('science');
-
-  const streams = {
-    science: {
-      subjects: ['Physics', 'Chemistry', 'Biology', 'Mathematics'],
-      careers: ['Engineering', 'Medicine', 'Research', 'IT'],
-      logo: '../components/Intermediate/Science', // Updated path
-
-      // logo: '/path-to-science-logo.svg', // Replace with actual path
-    },
-    commerce: {
-      subjects: ['Accountancy', 'Business Studies', 'Economics', 'Mathematics'],
-      careers: ['Chartered Accountancy', 'Business Management', 'Finance', 'Banking'],
-      logo: '/path-to-commerce-logo.svg', // Replace with actual path
-    },
-    arts: {
-      subjects: ['History', 'Political Science', 'Psychology', 'Sociology'],
-      careers: ['Law', 'Journalism', 'Teaching', 'Social Work'],
-      logo: '/path-to-arts-logo.svg', // Replace with actual path
-    },
+  const handleStreamClick = (stream) => {
+    setSelectedStream(stream);
+    setSelectedPath(null);
   };
 
-  const shapes = [
-    { size: 300, left: '-10%', top: '10%' },
-    { size: 250, right: '-10%', bottom: '15%' },
-    { size: 200, left: '50%', top: '-10%' },
-  ];
+  const handlePathClick = (path) => {
+    setSelectedPath(path);
+  };
+
+  const handleClose = () => {
+    setSelectedPath(null);
+  };
 
   return (
-    <section style={{ position: 'relative', padding: '40px 20px', overflow: 'hidden' }}>
-      <Background />
-      {shapes.map((shape, index) => (
-        <AnimatedShape
-          key={index}
-          style={{
-            width: shape.size,
-            height: shape.size,
-            left: shape.left,
-            right: shape.right,
-            top: shape.top,
-            bottom: shape.bottom,
-          }}
-          animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 360],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-      ))}
-      <Typography 
-        variant="h4" 
-        gutterBottom 
-        align="center" 
-        style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}
-      >
-        Intermediate Streams
-      </Typography>
-      <Tabs 
-        value={activeTab} 
-        onChange={(event, newValue) => setActiveTab(newValue)} 
-        aria-label="streams tabs"
-        indicatorColor="primary"
-        textColor="primary"
-        variant="fullWidth"
-        style={{ marginBottom: '20px' }}
-      >
-        <Tab label="Science" value="science" />
-        <Tab label="Commerce" value="commerce" />
-        <Tab label="Arts" value="arts" />
-      </Tabs>
+    <ThemeProvider theme={theme}>
+      <Box sx={{
+        backgroundColor: 'background.default',
+        color: 'text.primary',
+        padding: theme.spacing(4),
+      }}>
+        <Typography variant="h2" align="center" gutterBottom sx={{ color: 'primary.main' }}>
+          Career Path Explorer
+        </Typography>
+        <Typography variant="h5" align="center" gutterBottom sx={{ mb: 6, color: 'text.secondary' }}>
+          Discover Your Future After 10th Grade
+        </Typography>
 
-      {Object.entries(streams).map(([stream, info]) => (
-        <Box 
-          key={stream} 
-          role="tabpanel" 
-          hidden={activeTab !== stream} 
-          id={`tabpanel-${stream}`}
-          style={{ position: 'relative', padding: '20px', background: 'white', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}
-        >
-          <Typography 
-            variant="h6" 
-            gutterBottom 
-            style={{ marginBottom: '10px', fontWeight: 'bold', color: '#555' }}
-          >
-            {stream.charAt(0).toUpperCase() + stream.slice(1)} Stream
-          </Typography>
-          <Logo 
-            src={info.logo} 
-            alt={`${stream} logo`} 
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-          />
-          <Box display="flex" gap={2} flexDirection={{ xs: 'column', sm: 'row' }}>
-            <StyledCard
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              style={{ flex: 1 }}
-            >
-              <CardContent style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Typography variant="h6" style={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                  Subjects
-                </Typography>
-                <ul style={{ paddingLeft: '20px' }}>
-                  {info.subjects.map((subject, index) => (
-                    <li key={index} style={{ marginBottom: '5px' }}>{subject}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </StyledCard>
-            <StyledCard
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              style={{ flex: 1 }}
-            >
-              <CardContent style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Typography variant="h6" style={{ fontWeight: 'bold', marginBottom: '10px' }}>
-                  Career Opportunities
-                </Typography>
-                <ul style={{ paddingLeft: '20px' }}>
-                  {info.careers.map((career, index) => (
-                    <li key={index} style={{ marginBottom: '5px' }}>{career}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </StyledCard>
+        <Grid container spacing={4} justifyContent="center">
+          {Object.entries(streams).map(([streamName, streamInfo]) => (
+            <Grid item xs={12} sm={6} md={4} key={streamName}>
+              <GlassCard onClick={() => handleStreamClick(streamName)}>
+                <CardContent>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <StyledAvatar sx={{ mr: 2 }}>
+                      {streamInfo.icon}
+                    </StyledAvatar>
+                    <Typography variant="h5" component="div" sx={{ textTransform: 'capitalize' }}>
+                      {streamName}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                    Explore exciting career paths in the field of {streamName} after 10th grade.
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    endIcon={<ArrowForward />}
+                  >
+                    Discover Opportunities
+                  </Button>
+                </CardContent>
+              </GlassCard>
+            </Grid>
+          ))}
+        </Grid>
+
+        {selectedStream && (
+          <Box mt={8}>
+            <Typography variant="h4" gutterBottom sx={{ textTransform: 'capitalize', color: 'primary.main' }}>
+              {selectedStream} Career Paths
+            </Typography>
+            <Grid container spacing={4}>
+              {streams[selectedStream].paths.map((path) => (
+                <Grid item xs={12} sm={6} md={4} key={path.name}>
+                  <GlassCard onClick={() => handlePathClick(path)}>
+                    <CardContent>
+                      <Box display="flex" alignItems="center" mb={2}>
+                        <StyledAvatar sx={{ mr: 2 }}>
+                          {path.icon}
+                        </StyledAvatar>
+                        <Typography variant="h6" component="div">
+                          {path.name}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                        {path.description}
+                      </Typography>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        fullWidth
+                        endIcon={<EmojiEvents />}
+                      >
+                        Explore Path
+                      </Button>
+                    </CardContent>
+                  </GlassCard>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
-        </Box>
-      ))}
-    </section>
+        )}
+
+        <Dialog
+          open={Boolean(selectedPath)}
+          onClose={handleClose}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            style: {
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+            },
+          }}
+        >
+          {selectedPath && (
+            <>
+              <DialogTitle>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Typography variant="h4" color="primary">{selectedPath.name} Career Path</Typography>
+                  <IconButton onClick={handleClose}>
+                    <Close />
+                  </IconButton>
+                </Box>
+              </DialogTitle>
+              <DialogContent>
+                <Typography variant="body1" paragraph>
+                  {selectedPath.description}
+                </Typography>
+                <Typography variant="h6" gutterBottom color="primary">
+                  Your Career Journey
+                </Typography>
+                <Stepper orientation={isMobile ? 'vertical' : 'horizontal'} alternativeLabel={!isMobile}>
+                  {selectedPath.steps.map((step) => (
+                    <Step key={step}>
+                      <StepLabel>{step}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+                <Typography variant="h6" gutterBottom sx={{ mt: 4 }} color="primary">
+                  Potential Careers
+                </Typography>
+                <List>
+                  {selectedPath.careers.map((career) => (
+                    <ListItem key={career}>
+                      <ListItemAvatar>
+                        <StyledAvatar>
+                          <Work />
+                        </StyledAvatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={career} />
+                    </ListItem>
+                  ))}
+                </List>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  Close
+                </Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+      </Box>
+    </ThemeProvider>
   );
 };
 
-export default StreamsSection;
+export default CareerExplorer;

@@ -1,155 +1,88 @@
 import React from 'react';
-import { Box, Typography, Grid, Card, CardContent } from '@mui/material';
-import { styled } from '@mui/system';
+import { Box, Typography, Chip, Avatar, Card, CardContent, Grid, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
+import { Star, FormatQuote } from '@mui/icons-material';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const StyledCard = styled(motion(Card))(({ theme }) => ({
-  backgroundColor: '#ffffff',
-  borderRadius: '20px',
-  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-  overflow: 'hidden',
-  transition: 'all 0.3s ease-in-out',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-}));
+// Sample mentee reviews data
+const reviews = [
+  {
+    name: 'Arundhati Lohakare',
+    feedback: 'I am incredibly grateful for the assistance and guidance provided by Kashish in refining my resume. His deep understanding of the industry and a keen eye for detail helped me present my skills and...',
+    avatar: 'https://randomuser.me/api/portraits/women/45.jpg'
+  },
+  {
+    name: 'Satyam Agarwal',
+    feedback: 'The session was very inspiring, and I gained a lot of insight into the silly mistakes I have been making when sitting for job interviews. Abhishek sir also helped me with a mock interview...',
+    avatar: 'https://randomuser.me/api/portraits/men/46.jpg'
+  },
+  {
+    name: 'Trisha Parekh',
+    feedback: 'One of the best consulting sessions I ever had! Thank you, Rishika, for covering all my queries in a very well-structured manner, I truly loved the way you were patiently listening to all of my...',
+    avatar: 'https://randomuser.me/api/portraits/women/47.jpg'
+  },
+  {
+    name: 'Sonu Kumar',
+    feedback: 'I had the incredible opportunity to be mentored by an exceptional individual who exceeded all my expectations. Their unwavering support, genuine passion, and deep expertise created a...',
+    avatar: 'https://randomuser.me/api/portraits/men/48.jpg'
+  }
+];
 
-const NumberCircle = styled(Box)(({ theme }) => ({
-  width: '60px',
-  height: '60px',
-  borderRadius: '50%',
-  background: 'linear-gradient(135deg, #6e8efb, #a777e3)',
-  color: 'white',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontWeight: 'bold',
-  fontSize: '1.5rem',
-  marginBottom: theme.spacing(2),
-  boxShadow: '0 4px 20px rgba(110, 142, 251, 0.3)',
-}));
-
-const Background = styled(Box)({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'white', // Update the background color to white
-  zIndex: -1,
-});
-
-const AnimatedShape = styled(motion.div)(({ theme }) => ({
-  position: 'absolute',
-  backgroundColor: 'rgba(110, 142, 251, 0.1)',
-  borderRadius: '50%',
-}));
-
-const Features = () => {
-  const studentTestimonials = [
-    { name: 'Rahul', stream: 'Science', quote: 'The practical sessions have been incredibly helpful!' },
-    { name: 'Priya', stream: 'Commerce', quote: 'I love how the course prepares us for real-world scenarios.' },
-    { name: 'Amit', stream: 'Arts', quote: 'The diverse subjects have broadened my perspective.' },
-  ];
-
-  const shapes = [
-    { size: 300, left: '-5%', top: '20%' },
-    { size: 200, right: '-5%', bottom: '10%' },
-    { size: 150, left: '50%', top: '-5%' },
-  ];
-
+const SessionStats = () => {
   return (
-    <Box sx={{ 
-      position: 'relative',
-      overflow: 'hidden',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      py: 10,
-      px: 4,
-    }}>
-      <Background />
-      {shapes.map((shape, index) => (
-        <AnimatedShape
-          key={index}
-          style={{
-            width: shape.size,
-            height: shape.size,
-            left: shape.left,
-            right: shape.right,
-            top: shape.top,
-            bottom: shape.bottom,
-          }}
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      ))}
-      <Grid container spacing={6} alignItems="center">
-        <Grid item xs={12} md={7}>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <Typography variant="h2" gutterBottom fontWeight="bold" sx={{ color: '#333', mb: 2 }}>
-              Student Testimonials
-            </Typography>
-            <Typography variant="h5" sx={{ color: '#666', mb: 6 }}>
-              Hear directly from our students about their experiences and how our programs have made a difference in their academic journey.
-            </Typography>
-          </motion.div>
-          <Grid container spacing={4}>
-            {studentTestimonials.map((testimonial, index) => (
-              <Grid item xs={12} sm={6} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 * (index + 1) }}
-                >
-                  <StyledCard
-                    whileHover={{ 
-                      scale: 1.05,
-                      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-                    }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                      <NumberCircle>{index + 1}</NumberCircle>
-                      <Typography variant="h5" gutterBottom fontWeight="bold" color="#333">
-                        {testimonial.name}
-                      </Typography>
-                      <Typography variant="body1" color="#666">
-                        <strong>Stream:</strong> {testimonial.stream}
-                      </Typography>
-                      <Typography variant="body1" color="#666" sx={{ mt: 2 }}>
-                        "{testimonial.quote}"
-                      </Typography>
-                    </CardContent>
-                  </StyledCard>
-                </motion.div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+    >
+      <Box sx={{ my: 8, textAlign: 'left' ,marginLeft:'25px'}}>
+        {/* Heading Section */}
+        <Typography variant="h4" fontWeight="bold" gutterBottom>Mentee <span style={{ color: '#1976d2' }}>Reviews</span></Typography>
+        <Typography variant="body1" gutterBottom>Read real stories from mentees about their transformative journey.</Typography>
+
+        {/* Reviews Section */}
+        <Box sx={{ mt: 4, position: 'relative' }}>
+          {/* Arrow Navigation */}
+          <IconButton sx={{ position: 'absolute', left: 0, top: '50%' }}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton sx={{ position: 'absolute', right: 0, top: '50%' }}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+
+          <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
+            {reviews.map((review, index) => (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <Card sx={{ borderRadius: '15px', p: 3, boxShadow: 3 }}>
+                  <CardContent>
+                    {/* Quote Icon */}
+                    <Box sx={{ textAlign: 'left', mb: 2 }}>
+                      <FormatQuote sx={{ fontSize: '40px', color: '#f4b400' }} />
+                    </Box>
+
+                    {/* Feedback Text */}
+                    <Typography variant="body1" sx={{ color: '#555', height: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {review.feedback}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#1976d2', mt: 2 }}>
+                      Read more &#x2192;
+                    </Typography>
+
+                    {/* Avatar and Name */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 3 }}>
+                      <Avatar src={review.avatar} sx={{ width: 40, height: 40, mr: 2 }} />
+                      <Typography variant="body1" fontWeight="bold">{review.name}</Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
               </Grid>
             ))}
           </Grid>
-        </Grid>
-        <Grid item xs={12} md={5}>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            {/* Optionally, you can add an image or additional content here */}
-          </motion.div>
-        </Grid>
-      </Grid>
-    </Box>
+        </Box>
+      </Box>
+    </motion.div>
   );
 };
 
-export default Features;
+export default SessionStats;

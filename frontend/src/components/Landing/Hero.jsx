@@ -105,19 +105,6 @@ const Hero = () => {
               </motion.div>
             </motion.div>
           </Box>
-          <Box
-            component={motion.img}
-            src={referenceImage}
-            alt="Person using the app"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            sx={{
-              maxWidth: { xs: '100%', md: '45%' },
-              borderRadius: '15px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-            }}
-          />
         </Box>
       </ContentWrapper>
       {symbols.map((symbol, index) => (

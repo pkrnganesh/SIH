@@ -89,33 +89,6 @@ const Footer = () => {
     <FooterPaper elevation={0}>
       <Container maxWidth="lg">
         <Grid container spacing={4} textAlign="center">
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={3}
-            sx={{
-              backgroundImage:
-                "linear-gradient(-75deg,  #C471ED 10%, white 100%)",
-              borderRadius: "10px",
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: theme => theme.spacing(3),
-            }}
-          >
-            <Typography variant="h6" fontWeight="bold">
-              Support Our Development
-            </Typography>
-            <Typography variant="body2" color="textSecondary" mb={2}>
-              Contribute to our development efforts to enhance the attendance analytics platform and make it better for everyone.
-            </Typography>
-            <DonateButton variant="contained">
-              Donate Now <HeartIcon />
-            </DonateButton>
-          </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <FooterHeading variant="subtitle1">Resources</FooterHeading>
             <FooterLink href="#" variant="body2">

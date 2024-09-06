@@ -1,5 +1,9 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Landing from "../pages/Landing";
+import IntermediateCourse from "../pages/IntermediateCourse";
+import CareerGuidanceAi from "../pages/CareerGuidanceAI";
+import StudentDashboad from "../pages/StudentDashboard";
+
 import React from "react";
 
 export function HomeRoutes() {
@@ -7,6 +11,9 @@ export function HomeRoutes() {
     <Router>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/intermediate-course" element={<IntermediateCourse />} />
+        <Route path="/career-guidance-ai" element={<CareerGuidanceAi />} />
+        <Route path="/student-dashboard" element={<StudentDashboad />} />
       </Routes>
     </Router>
   );

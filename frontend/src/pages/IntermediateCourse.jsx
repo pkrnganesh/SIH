@@ -6,15 +6,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
-import Hero from '../components/Landing/Hero';
 import Footer from '../components/Landing/Footer';
 
 
 // Import the new Intermediate Course Info components
 import StreamsSection from '../components/IntermediateCourse/StreamsSection';
-import TopCollegesSection from '../components/IntermediateCourse/TopCollegesSection';
-import EntranceExamsSection from '../components/IntermediateCourse/EntranceExamSection.jsx';
-import StudentTestimonialsSection from '../components/IntermediateCourse/StudentTestmonialsComponents.jsx';
+import ModernCollegeExplorer from '../components/IntermediateCourse/TopCollegesSection';
+import ExamDashboard from '../components/IntermediateCourse/EntranceExamSection.jsx';
+import SessionStats from '../components/IntermediateCourse/StudentTestmonialsComponents.jsx';
+
 
 function IntermediateCourse() {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,13 +31,11 @@ function IntermediateCourse() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <Hero />
-
                 {/* Add the new Intermediate Course Info sections */}
                 <StreamsSection />
-                <TopCollegesSection />
-                <EntranceExamsSection />
-                <StudentTestimonialsSection />
+                <ModernCollegeExplorer />
+                <ExamDashboard />
+                <SessionStats />
 
                 <Footer />
               </Suspense>
