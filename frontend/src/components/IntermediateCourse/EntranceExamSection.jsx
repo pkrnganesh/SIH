@@ -35,7 +35,7 @@ const FloatingShape = styled(motion.div)(({ theme }) => ({
 
 const exams = [
   { id: 'jee', name: 'JEE Main', description: 'Joint Entrance Examination for Engineering' },
-  { id: 'neet', name: 'NEET', description: 'National Eligibility cum Entrance Test for Medical' },
+  { id: 'State Board Exmas', name: 'State Board Exmas', description: 'National Eligibility cum Entrance Test for Medical' },
   { id: 'clat', name: 'CLAT', description: 'Common Law Admission Test' },
   { id: 'cuet', name: 'CUET', description: 'Common University Entrance Test' },
 ];
@@ -280,21 +280,6 @@ const ExamDashboard = () => {
                         </ListItem>
                       ))}
                     </List>
-                  </CardContent>
-                </GlassCard>
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <GlassCard>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-                      <BarChart2 size={24} style={{ marginRight: '8px' }} /> Your Progress
-                    </Typography>
-                    {studyProgress.map((subject) => (
-                      <Box key={subject.subject} sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{ mb: 1 }}>{subject.subject}</Typography>
-                        <LinearProgress variant="determinate" value={subject.progress} sx={{ height: 10, borderRadius: 5 }} />
-                      </Box>
-                    ))}
                   </CardContent>
                 </GlassCard>
               </Grid>

@@ -3,6 +3,7 @@ import { Box, Typography, CardContent, Container, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import Slider from 'react-slick';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -11,7 +12,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   background: 'white',
   position: 'relative',
   overflow: 'hidden',
-  marginTop:'-50px',
+  marginTop: '-50px',
 }));
 
 const GlassCard = styled(motion.div)(({ theme }) => ({
@@ -57,18 +58,22 @@ const careerPaths = [
     description: 'Prepare for higher education with diverse academic fields.',
     icon: '🎓',
     color: '#FFD700',
+    path: '/intermediate-course', // Add the path property
   },
   {
     title: 'Polytechnic',
     description: 'Hands-on technical education in engineering and technology.',
     icon: '🔧',
     color: '#4CAF50',
+    path: '/intermediate-course', // Add the path property
+
   },
   {
     title: 'ITI',
     description: 'Vocational training for job-ready skills in various trades.',
     icon: '🏭',
     color: '#2196F3',
+    path: '/intermediate-course', // Add the path property
   },
   {
     title: 'Paramedical',
@@ -91,6 +96,14 @@ const careerPaths = [
 ];
 
 const TrendingPaths = () => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleLearnMoreClick = (path) => {
+    if (path) {
+      navigate(path); // Navigate to the path if it exists
+    }
+  };
+
   const settings = {
     dots: true,
     infinite: true,
@@ -151,7 +164,12 @@ const TrendingPaths = () => {
                   <Typography variant="body2" sx={{ color: 'rgba(0, 0, 0, 0.6)', mb: 2 }}>
                     {path.description}
                   </Typography>
-                  <Button variant="outlined" size="small" sx={{ mt: 'auto' }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ mt: 'auto' }}
+                    onClick={() => handleLearnMoreClick(path.path)} // Add onClick event
+                  >
                     Learn More
                   </Button>
                 </CardContent>

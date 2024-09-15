@@ -1,10 +1,10 @@
-import React, { useState, Suspense } from 'react';
+import React, {  Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Container } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { lightTheme, darkTheme } from '../components/Landing/theme';
+import { lightTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
 import Footer from '../components/Landing/Footer';
 import GuidanceHero from '../components/Guidance/GuidanceHero';
@@ -15,10 +15,8 @@ import FAQ from '../components/Landing/FAQ';
 
 
 function GuidancePage() {
-  const [darkMode, setDarkMode] = useState(false);
-  const theme = darkMode ? darkTheme : lightTheme;
+  const theme =  lightTheme;
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   return (
     <ThemeProvider theme={theme}>
@@ -33,7 +31,7 @@ function GuidancePage() {
           >
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
-                <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+                <Header />
                 <GuidanceHero />
                 <MentorList />
                 <SessionStats />

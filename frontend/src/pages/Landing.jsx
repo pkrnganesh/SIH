@@ -9,9 +9,7 @@ import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
 import Hero from '../components/Landing/Hero';
 import Features from '../components/Landing/Features';
-import Pricing from '../components/Landing/Pricing';
 import FAQ from '../components/Landing/FAQ';
-import Team from '../components/Landing/Team';
 import Footer from '../components/Landing/Footer';
 
 
@@ -32,9 +30,7 @@ function Landing() {
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                 <Hero />
                 <Features />
-                {/* <Pricing /> */}
                 <FAQ />
-                {/* <Team /> */}
                 <Footer />
               </Suspense>
             </Container>

@@ -3,6 +3,9 @@ import Landing from "../pages/Landing";
 import IntermediateCourse from "../pages/IntermediateCourse";
 import CareerGuidanceAi from "../pages/CareerGuidanceAI";
 import StudentDashboad from "../pages/StudentDashboard";
+import CareerGuidanceSignup from "../pages/StudentSignup";
+import StudentLogin from "../pages/StudentLogin"
+import MentorDashboard from "../pages/MentorDashboard";
 
 import React from "react";
 import GuidancePage from "../pages/GuidancePage";
@@ -16,6 +19,10 @@ export function HomeRoutes() {
         <Route path="/intermediate-course" element={<IntermediateCourse />} />
         <Route path="/career-guidance-ai" element={<CareerGuidanceAi />} />
         <Route path="/student-dashboard" element={<StudentDashboad />} />
+        <Route path="/student-signup" element={<CareerGuidanceSignup />} />
+        <Route path="/student-login" element={<StudentLogin />} />
+        <Route path="/mentor-dashbord" element={<MentorDashboard />} />
+
       </Routes>
     </Router>
   );

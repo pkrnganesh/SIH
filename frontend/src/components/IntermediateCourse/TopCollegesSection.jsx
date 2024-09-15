@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, color } from 'framer-motion';
 import {
   Box,
   Typography,
@@ -192,7 +192,7 @@ const ModernCollegeExplorer = () => {
     <ThemeProvider theme={theme} >
       <Box sx={{ backgroundColor:'white'}}>
         <HeroSection>
-          <Typography variant="h3" sx={{ alignContent:'left',textAlign:'left'}}>
+          <Typography variant="h3" sx={{ textAlign:'left',color:'#9d50bb',marginLeft:'30px'}}>
             Explore Top Intermediate Colleges
           </Typography>
         </HeroSection>

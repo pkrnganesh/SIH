@@ -24,15 +24,10 @@ import {
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import {
   Science,
-  Business,
-  Palette,
-  Computer,
-  Engineering,
   LocalHospital,
-  Gavel,
+  Engineering,
   School,
   Work,
-  TrendingUp,
   EmojiEvents,
   Close,
   ArrowForward,
@@ -90,14 +85,13 @@ const GlassCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
 }));
 
 const streams = {
-  science: {
+  intermediate: {
     icon: <Science />,
     paths: [
       {
@@ -123,69 +117,11 @@ const streams = {
       },
     ],
   },
-  commerce: {
-    icon: <Business />,
-    paths: [
-      {
-        name: 'Chartered Accountancy',
-        icon: <TrendingUp />,
-        description: 'Become a financial expert and business consultant',
-        steps: ['11th & 12th (Commerce)', 'CA Foundation', 'CA Intermediate', 'Articleship', 'CA Final'],
-        careers: ['Chartered Accountant', 'Financial Analyst', 'Tax Consultant', 'Auditor'],
-      },
-      {
-        name: 'Business Management',
-        icon: <Work />,
-        description: 'Lead and manage businesses in a global marketplace',
-        steps: ['11th & 12th (Commerce)', 'Entrance Exams (CAT/XAT)', 'BBA', 'Internship', 'MBA'],
-        careers: ['Business Manager', 'Marketing Executive', 'HR Manager', 'Entrepreneur'],
-      },
-      {
-        name: 'Economics',
-        icon: <School />,
-        description: 'Analyze economic trends and shape policies',
-        steps: ['11th & 12th (Commerce)', 'Entrance Exams', 'B.A./B.Sc. Economics', 'Internship', 'M.A./M.Sc. Economics'],
-        careers: ['Economist', 'Policy Analyst', 'Investment Banker', 'Economic Consultant'],
-      },
-    ],
-  },
-  arts: {
-    icon: <Palette />,
-    paths: [
-      {
-        name: 'Law',
-        icon: <Gavel />,
-        description: 'Uphold justice and navigate the complexities of the legal system',
-        steps: ['11th & 12th (Any Stream)', 'CLAT/LSAT', 'B.A. LLB (5 years) or LLB (3 years)', 'Internship', 'LLM (optional)'],
-        careers: ['Corporate Lawyer', 'Criminal Lawyer', 'Judge', 'Legal Consultant'],
-      },
-      {
-        name: 'Media and Journalism',
-        icon: <Computer />,
-        description: 'Shape public opinion and tell compelling stories',
-        steps: ['11th & 12th (Any Stream)', 'Entrance Exams', 'BA Journalism', 'Internship', 'MA Journalism/Mass Comm'],
-        careers: ['Journalist', 'News Anchor', 'Content Strategist', 'Public Relations Specialist'],
-      },
-      {
-        name: 'Fine Arts',
-        icon: <Palette />,
-        description: 'Express creativity and emotions through various art forms',
-        steps: ['11th & 12th (Any Stream)', 'Entrance Exams', 'BFA', 'Internship/Apprenticeship', 'MFA'],
-        careers: ['Artist', 'Graphic Designer', 'Art Director', 'Art Therapist'],
-      },
-    ],
-  },
 };
 
 const CareerExplorer = () => {
-  const [selectedStream, setSelectedStream] = useState(null);
   const [selectedPath, setSelectedPath] = useState(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleStreamClick = (stream) => {
-    setSelectedStream(stream);
-    setSelectedPath(null);
-  };
 
   const handlePathClick = (path) => {
     setSelectedPath(path);
@@ -209,72 +145,40 @@ const CareerExplorer = () => {
           Discover Your Future After 10th Grade
         </Typography>
 
-        <Grid container spacing={4} justifyContent="center">
-          {Object.entries(streams).map(([streamName, streamInfo]) => (
-            <Grid item xs={12} sm={6} md={4} key={streamName}>
-              <GlassCard onClick={() => handleStreamClick(streamName)}>
-                <CardContent>
-                  <Box display="flex" alignItems="center" mb={2}>
-                    <StyledAvatar sx={{ mr: 2 }}>
-                      {streamInfo.icon}
-                    </StyledAvatar>
-                    <Typography variant="h5" component="div" sx={{ textTransform: 'capitalize' }}>
-                      {streamName}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-                    Explore exciting career paths in the field of {streamName} after 10th grade.
-                  </Typography>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    fullWidth
-                    endIcon={<ArrowForward />}
-                  >
-                    Discover Opportunities
-                  </Button>
-                </CardContent>
-              </GlassCard>
-            </Grid>
-          ))}
-        </Grid>
-
-        {selectedStream && (
-          <Box mt={8}>
-            <Typography variant="h4" gutterBottom sx={{ textTransform: 'capitalize', color: 'primary.main' }}>
-              {selectedStream} Career Paths
-            </Typography>
-            <Grid container spacing={4}>
-              {streams[selectedStream].paths.map((path) => (
-                <Grid item xs={12} sm={6} md={4} key={path.name}>
-                  <GlassCard onClick={() => handlePathClick(path)}>
-                    <CardContent>
-                      <Box display="flex" alignItems="center" mb={2}>
-                        <StyledAvatar sx={{ mr: 2 }}>
-                          {path.icon}
-                        </StyledAvatar>
-                        <Typography variant="h6" component="div">
-                          {path.name}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-                        {path.description}
+        <Box mt={8}>
+          <Typography variant="h4" gutterBottom sx={{ color: 'primary.main' }}>
+            Intermediate Career Paths
+          </Typography>
+          <Grid container spacing={4}>
+            {streams.intermediate.paths.map((path) => (
+              <Grid item xs={12} sm={6} md={4} key={path.name}>
+                <GlassCard onClick={() => handlePathClick(path)}>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <StyledAvatar sx={{ mr: 2 }}>
+                        {path.icon}
+                      </StyledAvatar>
+                      <Typography variant="h6" component="div">
+                        {path.name}
                       </Typography>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        fullWidth
-                        endIcon={<EmojiEvents />}
-                      >
-                        Explore Path
-                      </Button>
-                    </CardContent>
-                  </GlassCard>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        )}
+                    </Box>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                      {path.description}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      fullWidth
+                      endIcon={<EmojiEvents />}
+                    >
+                      Explore Path
+                    </Button>
+                  </CardContent>
+                </GlassCard>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
         <Dialog
           open={Boolean(selectedPath)}

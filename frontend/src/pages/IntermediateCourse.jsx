@@ -31,7 +31,6 @@ function IntermediateCourse() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                {/* Add the new Intermediate Course Info sections */}
                 <StreamsSection />
                 <ModernCollegeExplorer />
                 <ExamDashboard />

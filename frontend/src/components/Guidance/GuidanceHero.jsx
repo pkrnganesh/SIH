@@ -30,13 +30,12 @@ const GuidanceHero = () => {
         {/* Promo Section */}
         <Paper sx={{ bgcolor: '#f0f5ff', p: 2, mb: 4, borderRadius: '12px' }}>
           <Typography variant="body1" sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}>
-            Get 15% off on all mentorship sessions! <Button color="primary" sx={{ ml: 1 }}>Go Pro Now →</Button>
+            Search Bar <Button color="primary" sx={{ ml: 1 }}>→</Button>
           </Typography>
         </Paper>
 
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 2, mb: 6 }}>
-          <Button variant="contained" startIcon={<Search />} sx={{ borderRadius: '12px' }}>Find a Mentor</Button>
           <Button variant="contained" startIcon={<Star />} sx={{ borderRadius: '12px' }}>Mentor Match</Button>
           <Button variant="outlined" sx={{ borderRadius: '12px' }}>Be a mentor</Button>
         </Box>

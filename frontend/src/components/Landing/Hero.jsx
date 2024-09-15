@@ -3,7 +3,8 @@ import { Box, Typography, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import CustomButton from './CustomButton'; // Import your custom button component
-import CustomButton2 from './CostomButton2'; // Import your custom button component
+import CustomButton2 from './CustomButton2'; // Import your custom button component
+import CustomButton3 from './CustomButton3'; // Import your custom button component
 
 
 const FullWidthBox = styled(Box)(({ theme }) => ({
@@ -108,6 +109,7 @@ const Hero = () => {
             <Box display="flex" justifyContent="center" gap={2} mt={4}>
               <CustomButton />
               <CustomButton2 />
+              <CustomButton3 />
             </Box>
           </motion.div>
         </motion.div>

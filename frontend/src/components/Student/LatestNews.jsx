@@ -5,6 +5,9 @@ import { motion } from 'framer-motion';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import image1 from '../../image/image1.jpeg';
+import image2 from '../../image/image2.png';
+import image3 from '../../image/image3.jpeg';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
@@ -43,27 +46,27 @@ const newsArticles = [
   {
     title: 'Top 10 Career Trends for 2024',
     description: 'Discover the latest career trends shaping the future.',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: {image1},
   },
   {
     title: 'AI and the Future of Work',
     description: 'How AI is transforming job markets across the globe.',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: {image2},
   },
   {
     title: 'Remote Work: Opportunities and Challenges',
     description: 'Explore the pros and cons of the remote work culture.',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: {image3},
   },
   {
     title: 'Green Careers: Sustainability in the Workforce',
     description: 'Learn about careers focused on environmental sustainability.',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: {image1},
   },
   {
     title: 'Tech Jobs: Skills in Demand',
     description: 'Get insights into the most in-demand tech skills for 2024.',
-    imageUrl: 'https://via.placeholder.com/100',
+    imageUrl: {image2},
   },
 ];
 
