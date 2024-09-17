@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {
   CssBaseline, Box, Typography, Chip, Avatar, Button, IconButton,
-  Paper, Drawer, List, ListItem, ListItemIcon, ListItemText,
-  AppBar, Toolbar, Table, TableBody, TableCell, TableHead, TableRow
+  Paper, AppBar, Toolbar, Table, TableBody, TableCell, TableHead, TableRow, Dialog, DialogTitle
 } from '@mui/material';
 import {
-  Dashboard as DashboardIcon, EventAvailable as EventAvailableIcon, CalendarToday as CalendarIcon,
-  Edit as EditIcon, VideoCall as VideoCallIcon, Search as SearchIcon, Brightness4 as DarkModeIcon,
-  Person as PersonIcon
+  Edit as EditIcon, VideoCall as VideoCallIcon, Close as CloseIcon
 } from '@mui/icons-material';
 
 // Theme setup
@@ -31,40 +28,6 @@ const theme = createTheme({
     },
   },
 });
-
-// Sidebar component with relevant mentor dashboard options
-const Sidebar = () => (
-  <Drawer
-    variant="permanent"
-    sx={{
-      width: 240,
-      flexShrink: 0,
-      '& .MuiDrawer-paper': {
-        width: 240,
-        boxSizing: 'border-box',
-        borderRight: '1px solid #E5E7EB',
-      },
-    }}
-  >
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 4, fontWeight: 'bold' }}>DREAMTRAX</Typography>
-      <List>
-        {[
-          { text: 'Dashboard', icon: <DashboardIcon />, active: true },
-          { text: 'Upcoming Sessions', icon: <EventAvailableIcon /> },
-          { text: 'Mentor Availability', icon: <CalendarIcon /> },
-        ].map((item, index) => (
-          <ListItem button key={item.text} sx={{ borderRadius: 1, mb: 1, bgcolor: item.active ? 'rgba(124, 58, 237, 0.1)' : 'transparent' }}>
-            <ListItemIcon sx={{ color: item.active ? 'primary.main' : 'inherit' }}>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} sx={{ color: item.active ? 'primary.main' : 'inherit' }} />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  </Drawer>
-);
 
 // Profile Header component with "Book a Session" button
 const ProfileHeader = () => (
@@ -133,28 +96,41 @@ const UpcomingSessions = () => {
   );
 };
 
-// Main Application component
-const Dashboard = () => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <Box sx={{ display: 'flex' }}>
-      <Sidebar />
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>Dashboard</Typography>
-            <IconButton><SearchIcon /></IconButton>
-            <IconButton><DarkModeIcon /></IconButton>
-            <IconButton><PersonIcon /></IconButton>
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ p: 3 }}>
-          <ProfileHeader />
-          <UpcomingSessions />
-        </Box>
-      </Box>
-    </Box>
-  </ThemeProvider>
-);
+// Main Application component without the Sidebar
+const DashboardWithoutSidebar = () => {
+  const [isOpen, setIsOpen] = useState(true);
 
-export default Dashboard;
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {isOpen && (
+        <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
+          <DialogTitle>
+            Mentor Profile
+            <IconButton
+              aria-label="close"
+              onClick={handleClose}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <Box sx={{ p: 3 }}>
+            <ProfileHeader />
+            <UpcomingSessions />
+          </Box>
+        </Dialog>
+      )}
+    </ThemeProvider>
+  );
+};
+
+export default DashboardWithoutSidebar;
