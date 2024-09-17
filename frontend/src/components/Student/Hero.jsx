@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, Container, TextField, Button } from '@mui/material';
+import { Box, Typography, Container, TextField, Button, Grid, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
-import CustomButton from './CustomButton'; // Import your custom button component
-
+import CareerCard from './CareerCard'; // Import the CareerCard component
+import CareerCardSkeleton from './CareerCardSkeleton'; // Import the CareerCardSkeleton component
 
 const FullWidthBox = styled(Box)(({ theme }) => ({
   width: '100vw',
@@ -25,21 +25,20 @@ const SvgCurve = styled('div')({
   bottom: 0,
   left: 0,
   width: '100%',
-  height: '150px', // Adjust height as needed
+  height: '150px',
   overflow: 'hidden',
   lineHeight: 0,
-  transform: 'translateY(1px)', // Adjust to smooth out transition
+  transform: 'translateY(1px)',
   '& svg': {
     position: 'relative',
     display: 'block',
     width: 'calc(100% + 1.3px)',
-    height: '100%', // Ensure the curve fills the height properly
+    height: '100%',
   },
   '& .shape-fill': {
-    fill: '#FFFFFF', // Curve color, you can customize this
+    fill: '#FFFFFF',
   },
 });
-
 
 const ContentWrapper = styled(Container)(({ theme }) => ({
   position: 'relative',
@@ -88,18 +87,32 @@ const symbols = ['💼', '🎓', '💡', '🚀', '🌟', '🔍', '📊', '🏆',
 
 const Hero = () => {
   const [interests, setInterests] = useState('');
+  const [careers, setCareers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would handle the submission, e.g., send to an API
-    console.log('Submitted interests:', interests);
-    // Reset the input field
-    setInterests('');
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:700/carriers/guidance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ interests }),
+      });
+      const data = await response.json();
+      setCareers(data.guidance || []);
+    } catch (error) {
+      console.error('Error fetching career guidance:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <FullWidthBox>
-      <ContentWrapper maxWidth="md">
+      <ContentWrapper maxWidth="lg">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -126,8 +139,28 @@ const Hero = () => {
                 style: { fontSize: '1.2rem' },
               }}
             />
-           <CustomButton />
+            <StyledButton type="submit">Get Guidance</StyledButton>
           </Box>
+          <Grid container spacing={4} justifyContent="center" sx={{ mt: 4 }}>
+            {loading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <Grid item xs={12} sm={4} md={4} key={index}>
+                  <CareerCardSkeleton />
+                </Grid>
+              ))
+            ) : careers.length > 0 ? (
+              careers.map(career => (
+                <Grid item xs={12} sm={4} md={4} key={career.id}>
+                  <CareerCard career={career} />
+                </Grid>
+              ))
+            ) : (
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ color: 'white' }}>
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
         </motion.div>
       </ContentWrapper>
       {symbols.map((symbol, index) => (

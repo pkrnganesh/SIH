@@ -1,5 +1,5 @@
 const CarrierModel = require("../models/CarrierModel");
-const { getCareerGuidance } = require("./openaiIntegration");
+const { getCareerRecommendations } = require("./openaiIntegration");
 
 exports.getCarriers = async (req, res) => {
   try {
@@ -46,8 +46,7 @@ exports.deleteCarrier = async (req, res) => {
 exports.getCareerGuidance = async (req, res) => {
   const { interests } = req.body;
   try {
-    const userMessage = `I'm interested in ${interests && interests.join(", ")}. Can you recommend some careers for me?`;
-    const guidance = await getCareerGuidance(userMessage);
+    const guidance = await getCareerRecommendations(interests);
     res.json({ guidance });
   } catch (err) {
     res.status(500).json({ message: err.message });

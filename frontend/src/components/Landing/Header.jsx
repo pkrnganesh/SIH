@@ -22,6 +22,9 @@ const Header = () => {
           variant="h6"
           component="div"
           sx={{ flexGrow: 1, color: "black" }}
+          onClick={() => {
+            window.location.href = "/";
+          }}
         >
           DreamTrax{" "}
         </StyledTypography>

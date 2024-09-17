@@ -12,7 +12,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   background: 'white',
   position: 'relative',
   overflow: 'hidden',
-  marginTop: '-50px',
+  // marginTop: '-50px',
 }));
 
 const GlassCard = styled(motion.div)(({ theme }) => ({
