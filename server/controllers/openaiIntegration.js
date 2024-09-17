@@ -9,7 +9,8 @@ const modelName = "gpt-4o";
 
 async function getCareerRecommendations(interests) {
   try {
-    const carriers = await CarrierModel.find();
+    const carriers = CarrierModel.find();
+    console.log("logss",carriers);
     const matchingCarriers = carriers.filter(carrier => 
       interests.some(interest => 
         carrier.description.toLowerCase().includes(interest.toLowerCase()) ||

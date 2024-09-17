@@ -11,3 +11,5 @@ node_modules/
 
 # Dependency lock files
 package-lock.json
+
+config/
