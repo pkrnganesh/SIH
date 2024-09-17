@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Landing from "../pages/Landing";
 import IntermediateCourse from "../pages/IntermediateCourse";
-import CareerGuidanceAi from "../pages/CareerGuidanceAI";
+import CareerGuidanceAssessment from "../pages/CareerGuidanceAI";
 import StudentDashboad from "../pages/StudentDashboard";
 import CareerGuidanceSignup from "../pages/StudentSignup";
 import StudentLogin from "../pages/StudentLogin"
@@ -17,7 +17,7 @@ export function HomeRoutes() {
 
         <Route path="/guidance" element={<GuidancePage />} />
         <Route path="/intermediate-course" element={<IntermediateCourse />} />
-        <Route path="/career-guidance-ai" element={<CareerGuidanceAi />} />
+        <Route path="/career-guidance-ai" element={<CareerGuidanceAssessment />} />
         <Route path="/student-dashboard" element={<StudentDashboad />} />
         <Route path="/student-signup" element={<CareerGuidanceSignup />} />
         <Route path="/student-login" element={<StudentLogin />} />

@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const Carrierroutes = require('./routes/CarrierRoutes');
 const AuthRoutes = require('./routes/authRoutes'); 
@@ -13,6 +14,9 @@ const app = express();
 
 app.use(cors({ origin: 'http://localhost:2005' }));
 app.use(express.json());
+app.use(bodyParser.json());
+
+
 
 // Use the carrier and auth routes
 app.use('/carriers', Carrierroutes);
