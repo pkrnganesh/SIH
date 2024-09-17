@@ -1,4 +1,4 @@
-import React, {  Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Container } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
@@ -13,10 +13,13 @@ import SessionStats from '../components/Guidance/SessionStats';
 import CompanyLogos from '../components/Guidance/CompanyLogos';
 import FAQ from '../components/Landing/FAQ';
 
-
 function GuidancePage() {
-  const theme =  lightTheme;
+  const theme = lightTheme;
+  const [searchTerm, setSearchTerm] = useState('');
 
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -32,8 +35,8 @@ function GuidancePage() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header />
-                <GuidanceHero />
-                <MentorList />
+                <GuidanceHero onSearch={handleSearch} />
+                <MentorList searchTerm={searchTerm} />
                 <SessionStats />
                 <FAQ />
                 <CompanyLogos />

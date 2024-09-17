@@ -5,12 +5,11 @@ const dotenv = require('dotenv');
 const Carrierroutes = require('./routes/CarrierRoutes');
 const Mentorroutes = require('./routes/MentorRoutes');
 dotenv.config();
-
 const PORT = process.env.PORT;
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:2005' }));
 app.use(express.json());
 
 // Using the routes

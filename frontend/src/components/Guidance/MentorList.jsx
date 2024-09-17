@@ -1,80 +1,72 @@
-import React from 'react';
-import { Box, Card, CardContent, Avatar, Typography, Button, Grid, Badge } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Card, CardContent, Avatar, Typography, Button, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 
-// Dummy mentor data including images and ratings
-const mentors = [
-  {
-    name: 'Sheetij Aggarwal',
-    expertise: 'Investment Banking (Front Office)',
-    rating: 5,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
-  },
-  {
-    name: 'Riya Shrivastava',
-    expertise: 'Investment Office @ SBI Life',
-    rating: 4.8,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
-  },
-  {
-    name: 'Harsh Agarwal',
-    expertise: 'Analyst at Citi gp',
-    rating: 4.8,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
-  },
-  {
-    name: 'Venkatesh Chary',
-    expertise: 'Samagra Governance | ISB Hyderabad',
-    rating: 5,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/4.jpg',
-  },
-  {
-    name: 'Vaibhav Sharma',
-    expertise: 'Meesho | IIM Lucknow',
-    rating: 4.8,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
-  },
-  {
-    name: 'Darpan Bafna',
-    expertise: 'Bain & Co | IIMK Rank 4',
-    rating: 4.9,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/6.jpg',
-  },
-  {
-    name: 'Yash Patel',
-    expertise: 'Strategy Project Manager',
-    rating: 4.9,
-    available: true,
-    imageUrl: 'https://randomuser.me/api/portraits/men/7.jpg',
-  },
-];
+const MentorList = ({ searchTerm }) => {
+  const [mentors, setMentors] = useState([]);
+  const [filteredMentors, setFilteredMentors] = useState([]);
+  const [error, setError] = useState(null);
 
-const MentorList = () => {
+  useEffect(() => {
+    const fetchMentors = async () => {
+      try {
+        console.log('Fetching mentors...');
+        const response = await fetch('http://localhost:700/mentors');
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Fetched mentors:', data);
+        setMentors(data);
+        setFilteredMentors(data);
+      } catch (error) {
+        console.error('Error fetching mentors:', error);
+        setError(error.message);
+      }
+    };
+
+    fetchMentors();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const results = mentors.filter(mentor =>
+        mentor.specializations.some(spec => 
+          spec.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setFilteredMentors(results);
+    } else {
+      setFilteredMentors(mentors);
+    }
+  }, [searchTerm, mentors]);
+
+  if (error) {
+    return <Typography color="error">Error: {error}</Typography>;
+  }
+
+  if (mentors.length === 0) {
+    return <Typography>Loading mentors...</Typography>;
+  }
+
   return (
     <Box sx={{ textAlign: 'center', mb: 4 }}>
-      {/* Top Mentors Section */}
       <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
         Top Mentors
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        In search of excellence? Explore the highest-rated mentors as recognized by the platform.
+        In search of excellence? Explore our highest-rated mentors.
       </Typography>
 
-      {/* Mentor Cards */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <Grid container spacing={4}>
-          {mentors.slice(0, 12).map((mentor, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+          {filteredMentors.map((mentor) => (
+            <Grid item xs={12} sm={6} md={4} key={mentor._id}>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -93,31 +85,23 @@ const MentorList = () => {
                 >
                   <CardContent>
                     <Box sx={{ textAlign: 'center', mb: 2 }}>
-                      {/* Mentor's Profile Picture */}
-                      <Badge
-                        badgeContent="Available"
-                        color="success"
-                        invisible={!mentor.available}
-                        sx={{ mb: 1 }}
-                      >
-                        <Avatar
-                          sx={{
-                            width: 100,
-                            height: 100,
-                            mx: 'auto',
-                            border: '3px solid #ffffff',
-                            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
-                          }}
-                          src={mentor.imageUrl}
-                        />
-                      </Badge>
+                      <Avatar
+                        sx={{
+                          width: 120,
+                          height: 120,
+                          mx: 'auto',
+                          border: '3px solid #ffffff',
+                          boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
+                        }}
+                        src={mentor.image}
+                        alt={mentor.name}
+                      />
 
-                      {/* Mentor Name */}
                       <Typography
                         variant="h6"
                         sx={{
                           fontWeight: 'bold',
-                          mt: 1,
+                          mt: 2,
                           fontSize: '1.25rem',
                           color: '#333',
                         }}
@@ -125,37 +109,62 @@ const MentorList = () => {
                         {mentor.name}
                       </Typography>
 
-                      {/* Mentor Expertise */}
-                      <Typography variant="body2" color="text.secondary">
-                        {mentor.expertise}
+                      <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+                        {mentor.title}
                       </Typography>
 
-                      {/* Mentor Rating */}
+                      <Box sx={{ mt: 2 }}>
+                        {mentor.specializations.map((spec, index) => (
+                          <Typography
+                            key={index}
+                            variant="body2"
+                            sx={{
+                              display: 'inline-block',
+                              bgcolor: 'primary.light',
+                              color: 'primary.contrastText',
+                              px: 1,
+                              py: 0.5,
+                              borderRadius: '12px',
+                              mr: 1,
+                              mb: 1,
+                            }}
+                          >
+                            {spec}
+                          </Typography>
+                        ))}
+                      </Box>
+
                       <Typography
                         variant="body2"
-                        color="text.secondary"
-                        sx={{ mt: 1, display: 'flex', justifyContent: 'center' }}
+                        sx={{
+                          mt: 2,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          color: 'warning.main',
+                        }}
                       >
                         {Array(Math.floor(mentor.rating))
                           .fill(0)
                           .map((_, i) => (
-                            <span key={i}>&#9733;</span> // Star icon
+                            <span key={i}>★</span>
                           ))}
-                        ({mentor.rating})
+                        <span style={{ marginLeft: '4px', color: 'text.secondary' }}>
+                          ({mentor.rating.toFixed(1)})
+                        </span>
                       </Typography>
                     </Box>
 
-                    {/* View Profile Button */}
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
                       <Button
                         variant="contained"
-                        size="small"
+                        size="medium"
                         sx={{
                           textTransform: 'none',
                           borderRadius: '50px',
-                          backgroundColor: '#ff6b6b',
+                          bgcolor: 'primary.main',
                           '&:hover': {
-                            backgroundColor: '#ff5252',
+                            bgcolor: 'primary.dark',
                           },
                         }}
                       >
