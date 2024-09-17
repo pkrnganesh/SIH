@@ -11,3 +11,4 @@ router.post('/guidance', getCareerGuidance);
 
 
 module.exports = router;    
+
