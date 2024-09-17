@@ -9,4 +9,5 @@ router.put('/update', updateCarrier);
 router.delete('/delete', deleteCarrier);
 router.post('/guidance', getCareerGuidance);
 
+
 module.exports = router;    

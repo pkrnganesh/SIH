@@ -1,4 +1,4 @@
-import React from "react";
+import {React,useState} from "react";
 import {
   Box,
   Typography,
@@ -10,11 +10,14 @@ import {
   Paper,
   ThemeProvider,
   createTheme,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Route } from "lucide-react";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import SchoolIcon from "@mui/icons-material/School";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import signup from "../api/auth/signup";
 
 // Create a custom theme
 const theme = createTheme({
@@ -64,6 +67,51 @@ const FeatureItem = ({ icon, title, description }) => (
 );
 
 const CareerGuidanceSignup = () => {
+  const [formData, setFormData] = useState({
+    user_email: "",
+    user_name: "",
+    user_school: "",
+    user_phonenumber: "",
+    user_password: "",
+  });
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await signup(formData);
+      setSnackbar({
+        open: true,
+        message: data.message || "Signup successful!",
+        severity: "success",
+      });
+      // You might want to redirect the user or clear the form here
+    } catch (error) {
+      console.error("Signup error:", error);
+      setSnackbar({
+        open: true,
+        message: error.message || "An error occurred during signup",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -134,6 +182,7 @@ const CareerGuidanceSignup = () => {
             >
               <Box
                 component="form"
+                onSubmit={handleSubmit}
                 sx={{ width: "100%", mx: "auto", margin: "30px" }}
               >
                 <Typography
@@ -146,40 +195,47 @@ const CareerGuidanceSignup = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="email"
+                  id="user_email"
                   label="Student Email"
-                  name="email"
+                  name="user_email"
                   autoComplete="email"
                   autoFocus
                   sx={{ mb: 2, borderRadius: 8 }}
+                  value={formData.user_email}
+                  onChange={handleChange}
                 />
                 <br />
                 <br />
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-                      First Name
+                      Full Name
                     </Typography>
                     <TextField
                       required
                       fullWidth
-                      id="firstName"
-                      label="First Name"
-                      name="firstName"
+                      id="user_name"
+                      label="Full Name"
+                      name="user_name"
                       sx={{ mb: 2, borderRadius: 8 }}
+                      value={formData.user_name}
+                      onChange={handleChange}
                     />
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-                      Last Name
+                      Password
                     </Typography>
                     <TextField
                       required
                       fullWidth
-                      id="lastName"
-                      label="Last Name"
-                      name="lastName"
-                      sx={{ borderRadius: 8 }} // Add borderRadius here
+                      id="user_password"
+                      label="Password"
+                      name="user_password"
+                      type="password"
+                      sx={{ borderRadius: 8 }}
+                      value={formData.user_password}
+                      onChange={handleChange}
                     />
                   </Grid>
                 </Grid>
@@ -195,15 +251,16 @@ const CareerGuidanceSignup = () => {
                     >
                       Current University/School
                     </Typography>
-
                     <TextField
                       margin="normal"
                       required
                       fullWidth
-                      id="company"
+                      id="user_school"
                       label="Current University/School"
-                      name="company"
-                      sx={{ mb: 2, mt: 2, borderRadius: 8 }} // Add borderRadius here
+                      name="user_school"
+                      sx={{ mb: 2, mt: 2, borderRadius: 8 }}
+                      value={formData.user_school}
+                      onChange={handleChange}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -215,17 +272,18 @@ const CareerGuidanceSignup = () => {
                         marginBottom: -2,
                       }}
                     >
-                      {" "}
                       Phone Number
                     </Typography>
                     <TextField
                       margin="normal"
                       required
                       fullWidth
-                      id="phone"
+                      id="user_phonenumber"
                       label="Phone Number"
-                      name="phone"
-                      sx={{ mb: 2, borderRadius: 8 }} // Add borderRadius here
+                      name="user_phonenumber"
+                      sx={{ mb: 2, borderRadius: 8 }}
+                      value={formData.user_phonenumber}
+                      onChange={handleChange}
                     />
                   </Grid>
                 </Grid>
@@ -255,11 +313,10 @@ const CareerGuidanceSignup = () => {
                     py: 1.5,
                     borderRadius: 10,
                     marginLeft: "130px",
-                  }} // Add borderRadius here
+                  }}
                 >
                   Start Your Career Journey
                 </Button>
-
               </Box>
             </Paper>
 
@@ -301,6 +358,16 @@ const CareerGuidanceSignup = () => {
 
           
         </Grid>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </ThemeProvider>
   );

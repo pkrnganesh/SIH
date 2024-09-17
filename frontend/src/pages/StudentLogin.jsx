@@ -1,6 +1,4 @@
-//StudentLogin.jsx
-
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -9,11 +7,13 @@ import {
   Grid,
   Paper,
   ThemeProvider,
-  Divider
+  Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
+import login from '../api/auth/login';
 
 // Create a custom theme
 const theme = createTheme({
@@ -34,6 +34,50 @@ const theme = createTheme({
 });
 
 const StudentLogin = () => {
+  const [formData, setFormData] = useState({
+    user_email: "",
+    user_password: "",
+  });
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await login(formData);
+      setSnackbar({
+        open: true,
+        message: "Login successful!",
+        severity: "success",
+      });
+      // Store the token in localStorage or a secure storage method
+      localStorage.setItem("token", data.token);
+      // You might want to redirect the user here
+    } catch (error) {
+      console.error("Login error:", error);
+      setSnackbar({
+        open: true,
+        message: error.message || "An error occurred during login",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -72,49 +116,55 @@ const StudentLogin = () => {
                 Log in to access your DreamTrax account
               </Typography>
             
-              <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
-                Email Address
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                sx={{ mb: 4, borderRadius: 8 }}
-              />
-              <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
-                Password
-              </Typography>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                type="password"
-                id="password"
-                label="Password"
-                name="password"
-                autoComplete="current-password"
-                sx={{ mb: 4, borderRadius: 8 }}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  mb: 2,
-                  py: 1.5,
-                  borderRadius: 10,
-                  width: "60%",
-                  textAlign:"center",
-                  marginLeft:"70px"
-                }}
-              >
-                Log In
-              </Button>
+              <form onSubmit={handleSubmit}>
+                <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Email Address
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="user_email"
+                  label="Email Address"
+                  name="user_email"
+                  autoComplete="email"
+                  autoFocus
+                  sx={{ mb: 4, borderRadius: 8 }}
+                  value={formData.user_email}
+                  onChange={handleChange}
+                />
+                <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
+                  Password
+                </Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  type="password"
+                  id="user_password"
+                  label="Password"
+                  name="user_password"
+                  autoComplete="current-password"
+                  sx={{ mb: 4, borderRadius: 8 }}
+                  value={formData.user_password}
+                  onChange={handleChange}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    mt: 2,
+                    mb: 2,
+                    py: 1.5,
+                    borderRadius: 10,
+                    width: "60%",
+                    textAlign:"center",
+                    marginLeft:"70px"
+                  }}
+                >
+                  Log In
+                </Button>
+              </form>
               <Divider sx={{ mb: 4 }}>or</Divider>
 
               <Button
@@ -135,6 +185,16 @@ const StudentLogin = () => {
           </Grid>
         </Grid>
       </Box>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 };
