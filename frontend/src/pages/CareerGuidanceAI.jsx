@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {
   CssBaseline, Box, Typography, Button, Paper, Radio, RadioGroup, 
-  FormControlLabel, FormControl, Grid, useMediaQuery, Divider, Tooltip
+  FormControlLabel, FormControl, Grid, useMediaQuery, Divider, CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/system';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
-import TouchAppIcon from '@mui/icons-material/TouchApp';
+import CareerGuidanceResults from '../components/CarrierGuidanceAI/CareerGuidanceResults';
+import Header from '../components/Landing/Header';
+
 
 
 
@@ -78,18 +79,6 @@ const SidebarItem = styled(Box)(({ theme, active, completed }) => ({
   },
 }));
 
-const InteractiveIcon = styled(motion.div)(({ theme }) => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 40,
-  height: 40,
-  borderRadius: '50%',
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
-  cursor: 'pointer',
-  margin: theme.spacing(0, 1),
-}));
 
 const questions = [
   {
@@ -129,6 +118,8 @@ const CareerGuidanceAssessment = () => {
   const [responses, setResponses] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [resultsData, setResultsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleNext = async () => {
@@ -138,7 +129,7 @@ const CareerGuidanceAssessment = () => {
       setActiveStep(activeStep + 1);
       setCurrentQuestionIndex(0);
     } else {
-      // Create an array to store the results
+      setIsLoading(true);
       const resultArray = questions.map((section, sectionIndex) => {
         return {
           section: section.section,
@@ -164,13 +155,17 @@ const CareerGuidanceAssessment = () => {
   
         const data = await response.json();
         console.log("Assessment complete. Server response:", data);
+        setResultsData(data);
         setShowResults(true);
       } catch (error) {
         console.error('Error sending results:', error);
+        // Handle error (e.g., show error message to user)
+      } finally {
+        setIsLoading(false);
       }
     }
   };
-  
+
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
@@ -197,7 +192,8 @@ const CareerGuidanceAssessment = () => {
   };
 
   const currentQuestion = questions[activeStep].questions[currentQuestionIndex];
-  const progress = ((activeStep * questions[0].questions.length + currentQuestionIndex + 1) / (questions.length * questions[0].questions.length)) * 100;
+  const isLastQuestion = activeStep === questions.length - 1 && currentQuestionIndex === questions[activeStep].questions.length - 1;
+
 
   const sidebar = (
     <Box sx={{ width: isSmallScreen ? '100%' : 250, mb: isSmallScreen ? 4 : 0 }}>
@@ -216,91 +212,102 @@ const CareerGuidanceAssessment = () => {
     </Box>
   );
 
+
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header/>
+
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', p: 3, bgcolor: 'background.default' }}>
         {!showResults ? (
-          <>
-            <Typography variant="h4" gutterBottom align="center" sx={{ mb: 2, color: 'primary.main' }}>
-              Discover Your Ideal Career Path
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
-              Embark on a journey of self-discovery and career exploration. Answer these questions thoughtfully to uncover your unique strengths and passions.
-            </Typography>
-            <Grid container spacing={4}>
-              {!isSmallScreen && (
-                <Grid item xs={12} md={3}>
-                  {sidebar}
-                </Grid>
-              )}
-              {!isSmallScreen && (
-                <Divider orientation="vertical" flexItem sx={{ mr: -2 }} />
-              )}
-              <Grid item xs={12} md={9}>
-                {isSmallScreen && sidebar}
-                <StyledPaper elevation={0}>
-              <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-                Question {currentQuestionIndex + 1} of {questions[activeStep].questions.length}
-              </Typography>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeStep}-${currentQuestionIndex}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Typography variant="h6" gutterBottom sx={{ color: 'secondary.main' }}>
-                    {questions[activeStep].section}
-                  </Typography>
-                  <FormControl component="fieldset" sx={{ width: '100%', mb: 3 }}>
-                    <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
-                      {currentQuestion.question}
-                    </Typography>
-                    <RadioGroup
-                      aria-label={currentQuestion.question}
-                      name={`question-${activeStep}-${currentQuestionIndex}`}
-                      value={responses[`${questions[activeStep].section}_${currentQuestionIndex}`] || ''}
-                      onChange={handleResponse}
-                    >
-                      {currentQuestion.options.map((option) => (
-                        <StyledFormControlLabel 
-                          key={option} 
-                          value={option} 
-                          control={<StyledRadio />} 
-                          label={option} 
-                        />
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </motion.div>
-              </AnimatePresence>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                    <Button
-                      onClick={handleBack}
-                      disabled={activeStep === 0 && currentQuestionIndex === 0}
-                      variant="outlined"
-                      sx={{ minWidth: 100 }}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      disabled={!responses[`${questions[activeStep].section}_${currentQuestionIndex}`]}
-                      sx={{ minWidth: 100 }}
-                    >
-                      {activeStep === questions.length - 1 && currentQuestionIndex === questions[activeStep].questions.length - 1 ? 'Finish' : 'Next'}
-                    </Button>
-                  </Box>
-                </StyledPaper>
-              </Grid>
-            </Grid>
-          </>
-        ) : (
-
-
+         <>
+         <Typography variant="h4" gutterBottom align="center" sx={{ mb: 2, color: 'primary.main' }}>
+           Discover Your Ideal Career Path
+         </Typography>
+         <Typography variant="body1" align="center" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+           Embark on a journey of self-discovery and career exploration. Answer these questions thoughtfully to uncover your unique strengths and passions.
+         </Typography>
+         <Grid container spacing={4}>
+           {!isSmallScreen && (
+             <Grid item xs={12} md={3}>
+               {sidebar}
+             </Grid>
+           )}
+           {!isSmallScreen && (
+             <Divider orientation="vertical" flexItem sx={{ mr: -2 }} />
+           )}
+           <Grid item xs={12} md={9}>
+             {isSmallScreen && sidebar}
+             <StyledPaper elevation={0}>
+           <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+             Question {currentQuestionIndex + 1} of {questions[activeStep].questions.length}
+           </Typography>
+           <AnimatePresence mode="wait">
+             <motion.div
+               key={`${activeStep}-${currentQuestionIndex}`}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -20 }}
+               transition={{ duration: 0.3 }}
+             >
+               <Typography variant="h6" gutterBottom sx={{ color: 'secondary.main' }}>
+                 {questions[activeStep].section}
+               </Typography>
+               <FormControl component="fieldset" sx={{ width: '100%', mb: 3 }}>
+                 <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
+                   {currentQuestion.question}
+                 </Typography>
+                 <RadioGroup
+                   aria-label={currentQuestion.question}
+                   name={`question-${activeStep}-${currentQuestionIndex}`}
+                   value={responses[`${questions[activeStep].section}_${currentQuestionIndex}`] || ''}
+                   onChange={handleResponse}
+                 >
+                   {currentQuestion.options.map((option) => (
+                     <StyledFormControlLabel 
+                       key={option} 
+                       value={option} 
+                       control={<StyledRadio />} 
+                       label={option} 
+                     />
+                   ))}
+                 </RadioGroup>
+               </FormControl>
+             </motion.div>
+           </AnimatePresence>
+               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                 <Button
+                   onClick={handleBack}
+                   disabled={activeStep === 0 && currentQuestionIndex === 0}
+                   variant="outlined"
+                   sx={{ minWidth: 100 }}
+                 >
+                   Back
+                 </Button>
+                 <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={!responses[`${questions[activeStep].section}_${currentQuestionIndex}`] || isLoading}
+                sx={{ minWidth: 100 }}
+              >
+                {isLastQuestion ? (
+                  isLoading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    'Finish'
+                  )
+                ) : (
+                  'Next'
+                )}
+              </Button>
+               </Box>
+             </StyledPaper>
+           </Grid>
+         </Grid>
+       </>
+     ) : (
+          <CareerGuidanceResults data={resultsData} onClose={handleCloseResults} />
         )}
       </Box>
     </ThemeProvider>

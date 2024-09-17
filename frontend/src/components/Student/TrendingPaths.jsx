@@ -56,42 +56,37 @@ const careerPaths = [
   {
     title: 'Intermediate',
     description: 'Prepare for higher education with diverse academic fields.',
-    icon: '🎓',
-    color: '#FFD700',
+    
     path: '/intermediate-course', // Add the path property
   },
   {
     title: 'Polytechnic',
     description: 'Hands-on technical education in engineering and technology.',
-    icon: '🔧',
-    color: '#4CAF50',
+    
     path: '/intermediate-course', // Add the path property
 
   },
   {
     title: 'ITI',
     description: 'Vocational training for job-ready skills in various trades.',
-    icon: '🏭',
-    color: '#2196F3',
+    
     path: '/intermediate-course', // Add the path property
   },
   {
     title: 'Paramedical',
     description: 'Support medical professionals in healthcare-related courses.',
-    icon: '⚕️',
-    color: '#E91E63',
+    
   },
   {
     title: 'Short-term Courses',
     description: 'Quick, skill-focused programs for rapid career advancement.',
-    icon: '🚀',
-    color: '#9C27B0',
+
+    
   },
   {
     title: 'Digital Marketing',
     description: 'Master online promotion and social media strategies.',
-    icon: '📱',
-    color: '#FF5722',
+    
   },
 ];
 

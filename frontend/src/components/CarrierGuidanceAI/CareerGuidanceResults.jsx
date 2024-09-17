@@ -13,9 +13,22 @@ import {
 } from '@mui/material';
 import WorkIcon from '@mui/icons-material/Work';
 import SchoolIcon from '@mui/icons-material/School';
+import Header from '../../components/Landing/Header';
 
 const CareerGuidanceResults = ({ data, onClose }) => {
-  const { careerPaths, conclusion } = JSON.parse(data.guidance);
+  // Parse the JSON data correctly
+  const parseGuidanceData = (rawData) => {
+    try {
+      // Remove the "```json" at the start and "```" at the end, then parse
+      const cleanJson = rawData.guidance.replace(/^```json\n|\n```$/g, '');
+      return JSON.parse(cleanJson);
+    } catch (error) {
+      console.error("Error parsing guidance data:", error);
+      return { careerPaths: [], conclusion: "Error parsing data" };
+    }
+  };
+
+  const { careerPaths, conclusion } = parseGuidanceData(data);
 
   return (
     <motion.div
@@ -24,7 +37,8 @@ const CareerGuidanceResults = ({ data, onClose }) => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
     >
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, maxWidth: 800, mx: 'auto' }}>
+ <Header/>
+      <Paper elevation={2} sx={{ p: 4, borderRadius: 2, maxWidth: '100%', mx: 'auto' }}>
         <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', textAlign: 'center' }}>
           Your Career Guidance Results
         </Typography>

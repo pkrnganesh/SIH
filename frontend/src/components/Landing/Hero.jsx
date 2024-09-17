@@ -14,7 +14,7 @@ const FullWidthBox = styled(Box)(({ theme }) => ({
   right: '50%',
   marginLeft: '-50vw',
   marginRight: '-50vw',
-  background: 'linear-gradient(135deg, #9d50bb 100%,#FFD700 0%)',
+  background: 'linear-gradient(135deg, #9DBDFF 100%,#FFD700 0%)',
   overflow: 'hidden',
 }));
 
