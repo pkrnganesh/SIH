@@ -80,39 +80,83 @@ const SidebarItem = styled(Box)(({ theme, active, completed }) => ({
 }));
 
 
-const questions = [
+ const questions = [
   {
     section: "Personal Interests",
     questions: [
       {
-        question: "How much do you enjoy working with technology?",
-        options: ["Hate it", "Dislike it", "Neutral", "Like it", "Love it"]
+        question: "Do you enjoy activities like writing, journaling, or reading books in your free time?",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
       },
-     
+      {
+        question: "Are you drawn to playing musical instruments, singing, or creating music as a hobby?",
+        options:["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Do you enjoy spending time outdoors, exploring nature, or studying animals and plants?  ",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question:"Do you enjoy socializing, participating in group activities, or helping friends work through personal issues? ",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Are you fascinated by photography, painting, or designing objects?",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      }
     ]
   },
   {
     section: "Skills Assessment",
     questions: [
       {
-        question: "How would you rate your communication skills?",
+        question:  "Are you good at solving puzzles, logical challenges, or mathematical problems?",
         options: ["Poor", "Below Average", "Average", "Above Average", "Excellent"]
       },
-      
+      {
+        question: "Do you have strong coordination and excel in physical activities such as sports, dancing, or hands-on tasks?",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Are you skilled at reflecting on your emotions, understanding your strengths and weaknesses, and setting personal goals?",
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Are you comfortable contemplating deep philosophical questions, such as the meaning of life or your role in the universe ?",
+        options: ["Very uncomfortable", "Somewhat uncomfortable", "Neutral", "Somewhat comfortable", "Very comfortable"]
+      },
+      {
+        question: "Are you confident in articulating your thoughts, writing essays, or communicating clearly in discussions?",
+        options: ["Very uncomfortable", "Somewhat uncomfortable", "Neutral", "Somewhat comfortable", "Very comfortable"]
+      }
     ]
   },
   {
     section: "Work Preferences",
     questions: [
       {
-        question: "What type of work environment do you prefer?",
-        options: ["Fully remote", "Mostly remote", "Hybrid", "Mostly in-office", "Fully in-office"]
+        question: "Do you prefer working in team settings where collaboration and communication are key? ",
+        options:  ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
       },
-      
+      {
+        question: "Do you enjoy roles that involve data analysis, logical problem-solving, or working with numbers? ",
+        options:["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Would you prefer a job that allows you to work outside, interact with nature, or study living organisms?  ",
+        options: ["fullyremote", "remote", "neutral", "office", "fully comfortable in real time"]
+      },
+      {
+        question: "Do you prefer work that involves designing, creating visual content, or interpreting charts and diagrams?",
+        options:["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      },
+      {
+        question: "Do you enjoy hands-on tasks or jobs that involve physical activity, such as construction, athletics, or dance choreography?" ,
+        options: ["Not at all", "A little", "Moderately", "Quite a bit", "Extremely"]
+      }
     ]
   }
 ];
-
 const CareerGuidanceAssessment = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [responses, setResponses] = useState({});
