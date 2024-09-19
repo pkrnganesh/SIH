@@ -1,12 +1,12 @@
 const IntermediateExamSchema = require("../models/IntermediateExams");
 
-// Create a new exam entry
+// Create a new exam entry  
 const createExam = async (req, res) => {
   const { 
     examType, 
     resources, 
     cutoffs, 
-    importantDates, 
+    importantDates,   
     videoLecturers, 
     topPerformers 
   } = req.body;

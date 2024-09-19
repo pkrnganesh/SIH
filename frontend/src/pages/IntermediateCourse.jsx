@@ -4,18 +4,15 @@ import { CssBaseline, Container } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 
+// Themes and components
 import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
 import Footer from '../components/Landing/Footer';
-
-
-// Import the new Intermediate Course Info components
 import StreamsSection from '../components/IntermediateCourse/StreamsSection';
 import ModernCollegeExplorer from '../components/IntermediateCourse/TopCollegesSection';
-import ExamDashboard from '../components/IntermediateCourse/EntranceExamSection.jsx';
-import SessionStats from '../components/IntermediateCourse/StudentTestmonialsComponents.jsx';
-
-
+import ExamDashboard from '../components/IntermediateCourse/EntranceExamSection';
+import SessionStats from '../components/IntermediateCourse/StudentTestmonialsComponents'; // Testimonials Section
+ // Main Intermediate Course Page Component
 function IntermediateCourse() {
   const [darkMode, setDarkMode] = useState(false);
   const theme = darkMode ? darkTheme : lightTheme;
@@ -27,7 +24,12 @@ function IntermediateCourse() {
       <CssBaseline />
       <ParallaxProvider>
         <AnimatePresence>
-          <motion.div key="landing-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div
+            key="landing-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
@@ -35,8 +37,7 @@ function IntermediateCourse() {
                 <ModernCollegeExplorer />
                 <ExamDashboard />
                 <SessionStats />
-
-                <Footer />
+                 <Footer />
               </Suspense>
             </Container>
           </motion.div>

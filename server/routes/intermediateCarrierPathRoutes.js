@@ -12,3 +12,4 @@ router.post('/create-paths', createCareerPath);
 router.get('/', getCareerPaths);
 
 module.exports = router;
+  
