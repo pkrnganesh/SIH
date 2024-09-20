@@ -3,7 +3,7 @@ import { Box, Typography, Grid, Card, CardContent, Button, List, ListItem, ListI
 import { styled } from '@mui/system';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Book, TrendingUp, Calendar, Download, Search, PlayCircle, Star } from 'lucide-react';
-import { getExams } from '../../api/auth/intermediate/intermediateexam';
+import { getExams } from '../../api/intermediate/intermediateexam';
 
 const GlassCard = styled(motion(Card))(({ theme }) => ({
   background: 'white',

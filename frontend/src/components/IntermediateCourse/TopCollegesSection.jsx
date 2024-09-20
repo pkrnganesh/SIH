@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence, color } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Box,
   Typography,
   Grid,
-  Button,
   IconButton,
   useMediaQuery,
   Dialog,
@@ -13,17 +12,11 @@ import {
 } from '@mui/material';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import {
-  School,
   LocationOn,
-  EmojiEvents,
   Close,
   Star,
-  Science,
-  Palette,
-  Business,
-  Engineering,
-  Computer,
 } from '@mui/icons-material';
+import { getTopColleges } from '../../api/intermediate/intermediatecollege';
 
 // Custom theme
 const theme = createTheme({
@@ -41,27 +34,6 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
-    h1: {
-      fontWeight: 700,
-      fontSize: '3.5rem',
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2.5rem',
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: '2rem',
-    },
-    body1: {
-      fontSize: '1rem',
-    },
-    body2: {
-      fontSize: '0.875rem',
-    },
-  },
-  shape: {
-    borderRadius: 12,
   },
 });
 
@@ -100,83 +72,14 @@ const CardMedia = styled(Box)(({ theme }) => ({
   },
 }));
 
-const StreamBadge = styled(Chip)(({ theme }) => ({
-  position: 'absolute',
-  top: theme.spacing(2),
-  right: theme.spacing(2),
-  fontWeight: 'bold',
-}));
-
 const RatingBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   marginBottom: theme.spacing(1),
 }));
 
-const colleges = [
-  {
-    name: 'TechGenius Institute',
-    stream: 'Science',
-    icon: <Science />,
-    rating: 4.8,
-    address: '42 Innovation Avenue, Techno City, TC 54321',
-    description: 'Cutting-edge STEM education with a focus on emerging technologies and research opportunities.',
-    image: 'https://source.unsplash.com/1600x900/?technology',
-    features: ['AI Labs', 'Robotics Workshop', 'Nanotech Center'],
-    admissionProcess: [
-      'Online application with portfolio submission',
-      'AI-proctored aptitude test',
-      'Virtual reality campus tour and interview',
-    ],
-    achievements: [
-      'Winners of International Science Olympiad 2023',
-      'Published 50+ research papers in top journals',
-      'Launched 3 student-led tech startups',
-    ],
-  },
-  {
-    name: 'Creative Minds Academy',
-    stream: 'Arts',
-    icon: <Palette />,
-    rating: 4.6,
-    address: '789 Inspiration Boulevard, Artsville, AV 67890',
-    description: 'Nurturing creative talents through interdisciplinary arts programs and industry collaborations.',
-    image: 'https://source.unsplash.com/1600x900/?art',
-    features: ['Digital Media Lab', 'Performance Theater', 'VR Art Studio'],
-    admissionProcess: [
-      'Digital portfolio submission',
-      'Live performance or artwork creation',
-      'Collaborative project with current students',
-    ],
-    achievements: [
-      'Grand Prize at National Youth Art Exhibition',
-      'Students featured in major art galleries worldwide',
-      'Pioneered AR-enhanced art curriculum',
-    ],
-  },
-  {
-    name: 'Global Business School',
-    stream: 'Commerce',
-    icon: <Business />,
-    rating: 4.9,
-    address: '101 Enterprise Road, Biz City, BC 13579',
-    description: 'Preparing future business leaders with a global perspective and entrepreneurial mindset.',
-    image: 'https://source.unsplash.com/1600x900/?business',
-    features: ['Stock Trading Simulator', 'Startup Incubator', 'Global Business Lab'],
-    admissionProcess: [
-      'Business case study analysis',
-      'Group problem-solving challenge',
-      'Mock startup pitch presentation',
-    ],
-    achievements: [
-      'Ranked #1 in Young Entrepreneur Challenge 2023',
-      'Students won International Business Plan Competition',
-      '100% placement rate in Fortune 500 companies',
-    ],
-  },
-];
-
 const ModernCollegeExplorer = () => {
+  const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -188,11 +91,25 @@ const ModernCollegeExplorer = () => {
     setSelectedCollege(null);
   };
 
+  useEffect(() => {
+    const fetchTopColleges = async () => {
+      try {
+        const data = await getTopColleges();
+        setColleges(data);
+        console.log(data); // Log the fetched data
+      } catch (error) {
+        console.error('Failed to fetch top colleges', error);
+      }
+    };
+
+    fetchTopColleges();
+  }, []);
+
   return (
-    <ThemeProvider theme={theme} >
-      <Box sx={{ backgroundColor:'white'}}>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ backgroundColor: 'white' }}>
         <HeroSection>
-          <Typography variant="h3" sx={{ textAlign:'left',color:'#9d50bb',marginLeft:'30px'}}>
+          <Typography variant="h3" sx={{ textAlign: 'left', color: '#9d50bb', marginLeft: '30px' }}>
             Explore Top Intermediate Colleges
           </Typography>
         </HeroSection>
@@ -200,7 +117,7 @@ const ModernCollegeExplorer = () => {
         <Box sx={{ py: 8, px: 2 }}>
           <Grid container spacing={4} justifyContent="center">
             {colleges.map((college) => (
-              <Grid item xs={12} sm={6} md={4} key={college.name}>
+              <Grid item xs={12} sm={6} md={4} key={college._id}> {/* Use _id as MongoDB returns _id */}
                 <CollegeCard
                   whileHover={{ y: -10 }}
                   whileTap={{ scale: 0.95 }}
@@ -212,16 +129,10 @@ const ModernCollegeExplorer = () => {
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}
-                  >
-                    <StreamBadge
-                      icon={college.icon}
-                      label={college.stream}
-                      color="secondary"
-                    />
-                  </CardMedia>
+                  />
                   <CardContent>
                     <Typography variant="h5" gutterBottom>
-                      {college.name}
+                      {college.title} {/* Use 'title' as per schema */}
                     </Typography>
                     <RatingBox>
                       {[...Array(5)].map((_, index) => (
@@ -241,14 +152,9 @@ const ModernCollegeExplorer = () => {
           </Grid>
         </Box>
 
-        <Dialog
-          fullScreen
-          open={Boolean(selectedCollege)}
-          onClose={handleClose}
-          TransitionComponent={Transition}
-        >
+        <Dialog fullScreen open={Boolean(selectedCollege)} onClose={handleClose} TransitionComponent={Transition}>
           <DialogContent sx={{ p: 0 }}>
-            {selectedCollege && (
+            {selectedCollege ? (
               <Box>
                 <Box
                   sx={{
@@ -270,42 +176,37 @@ const ModernCollegeExplorer = () => {
                       p: 3,
                     }}
                   >
-                    <Typography variant="h2">{selectedCollege.name}</Typography>
-                    <Typography variant="h5">{selectedCollege.stream}</Typography>
+                    <Typography variant="h2">{selectedCollege.title}</Typography>
                   </Box>
-                  <IconButton
-                    sx={{ position: 'absolute', top: 16, right: 16, color: 'white' }}
-                    onClick={handleClose}
-                  >
+                  <IconButton sx={{ position: 'absolute', top: 16, right: 16, color: 'white' }} onClick={handleClose}>
                     <Close />
                   </IconButton>
                 </Box>
                 <Box sx={{ p: 3 }}>
                   <Typography variant="body1" paragraph>
                     <LocationOn sx={{ verticalAlign: 'middle', mr: 1 }} />
-                    {selectedCollege.address}
+                    {selectedCollege.location}
                   </Typography>
                   <Typography variant="body1" paragraph>
                     {selectedCollege.description}
                   </Typography>
+
                   <Typography variant="h6" gutterBottom>
                     Key Features
                   </Typography>
                   <Box sx={{ mb: 2 }}>
-                    {selectedCollege.features.map((feature, index) => (
+                    {selectedCollege.keyFeatures.map((feature, index) => (
                       <Chip key={index} label={feature} sx={{ mr: 1, mb: 1 }} />
                     ))}
                   </Box>
+
                   <Typography variant="h6" gutterBottom>
                     Admission Process
                   </Typography>
-                  <ol>
-                    {selectedCollege.admissionProcess.map((step, index) => (
-                      <li key={index}>
-                        <Typography variant="body1">{step}</Typography>
-                      </li>
-                    ))}
-                  </ol>
+                  <Typography variant="body1" paragraph>
+                    {selectedCollege.admissionProcess}
+                  </Typography>
+
                   <Typography variant="h6" gutterBottom>
                     Achievements
                   </Typography>
@@ -316,18 +217,25 @@ const ModernCollegeExplorer = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    startIcon={<School />}
-                    fullWidth
-                    sx={{ mt: 2 }}
-                  >
-                    Apply Now
-                  </Button>
+
+                  <Typography variant="h6" gutterBottom>
+                    Relevant Links
+                  </Typography>
+                  <ul>
+                    {selectedCollege.links.map((link, index) => (
+                      <li key={index}>
+                        <Typography variant="body1">
+                          <a href={link} target="_blank" rel="noopener noreferrer">
+                            {link}
+                          </a>
+                        </Typography>
+                      </li>
+                    ))}
+                  </ul>
                 </Box>
               </Box>
+            ) : (
+              <Typography variant="body1">No college selected.</Typography>
             )}
           </DialogContent>
         </Dialog>

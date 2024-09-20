@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -23,15 +23,12 @@ import {
 } from '@mui/material';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles';
 import {
-  Science,
-  LocalHospital,
   Engineering,
-  School,
   Work,
   EmojiEvents,
   Close,
-  ArrowForward,
 } from '@mui/icons-material';
+import { getCareerPaths } from '../../api/intermediate/intermediatepath'; // Adjust this import path
 
 // Custom theme
 const theme = createTheme({
@@ -90,38 +87,27 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   color: theme.palette.primary.contrastText,
 }));
 
-const streams = {
-  intermediate: {
-    icon: <Science />,
-    paths: [
-      {
-        name: 'Medical',
-        icon: <LocalHospital />,
-        description: 'Pursue a rewarding career in healthcare and medicine',
-        steps: ['11th & 12th (PCB)', 'NEET Exam', 'MBBS', 'Internship', 'Specialization (MD/MS)'],
-        careers: ['General Physician', 'Surgeon', 'Pediatrician', 'Radiologist'],
-      },
-      {
-        name: 'Engineering',
-        icon: <Engineering />,
-        description: 'Innovate and build the future through various engineering fields',
-        steps: ['11th & 12th (PCM)', 'JEE Main/Advanced', 'B.Tech/B.E.', 'Internship', 'M.Tech (optional)'],
-        careers: ['Software Engineer', 'Mechanical Engineer', 'Civil Engineer', 'Electrical Engineer'],
-      },
-      {
-        name: 'Pure Sciences',
-        icon: <School />,
-        description: 'Contribute to scientific advancements through research and academia',
-        steps: ['11th & 12th (PCM/PCB)', 'Entrance Exams', 'B.Sc.', 'M.Sc.', 'Ph.D.'],
-        careers: ['Research Scientist', 'Biochemist', 'Astrophysicist', 'Environmental Scientist'],
-      },
-    ],
-  },
-};
-
 const CareerExplorer = () => {
+  const [careerPaths, setCareerPaths] = useState([]);
   const [selectedPath, setSelectedPath] = useState(null);
+  const [loading, setLoading] = useState(true);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Fetch career paths from backend
+  useEffect(() => {
+    const fetchCareerPaths = async () => {
+      try {
+        const data = await getCareerPaths(); // Fetch data from API
+        setCareerPaths(data); // Update state with fetched data
+        setLoading(false);
+      } catch (error) {
+        console.log('Failed to fetch career paths');
+        setLoading(false);
+      }
+    };
+
+    fetchCareerPaths();
+  }, []);
 
   const handlePathClick = (path) => {
     setSelectedPath(path);
@@ -131,17 +117,33 @@ const CareerExplorer = () => {
     setSelectedPath(null);
   };
 
+  if (loading) {
+    return <Typography>Loading career paths...</Typography>;
+  }
+
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{
-        backgroundColor: 'background.default',
-        color: 'text.primary',
-        padding: theme.spacing(4),
-      }}>
-        <Typography variant="h2" align="center" gutterBottom sx={{ color: 'primary.main' }}>
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          color: 'text.primary',
+          padding: theme.spacing(4),
+        }}
+      >
+        <Typography
+          variant="h2"
+          align="center"
+          gutterBottom
+          sx={{ color: 'primary.main' }}
+        >
           Career Path Explorer
         </Typography>
-        <Typography variant="h5" align="center" gutterBottom sx={{ mb: 6, color: 'text.secondary' }}>
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
+          sx={{ mb: 6, color: 'text.secondary' }}
+        >
           Discover Your Future After 10th Grade
         </Typography>
 
@@ -150,19 +152,22 @@ const CareerExplorer = () => {
             Intermediate Career Paths
           </Typography>
           <Grid container spacing={4}>
-            {streams.intermediate.paths.map((path) => (
-              <Grid item xs={12} sm={6} md={4} key={path.name}>
+            {careerPaths.map((path) => (
+              <Grid item xs={12} sm={6} md={4} key={path._id}>
                 <GlassCard onClick={() => handlePathClick(path)}>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
                       <StyledAvatar sx={{ mr: 2 }}>
-                        {path.icon}
+                        <Engineering />
                       </StyledAvatar>
                       <Typography variant="h6" component="div">
-                        {path.name}
+                        {path.title}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ mb: 2, color: 'text.secondary' }}
+                    >
                       {path.description}
                     </Typography>
                     <Button
@@ -195,8 +200,14 @@ const CareerExplorer = () => {
           {selectedPath && (
             <>
               <DialogTitle>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h4" color="primary">{selectedPath.name} Career Path</Typography>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Typography variant="h4" color="primary">
+                    {selectedPath.title} Career Path
+                  </Typography>
                   <IconButton onClick={handleClose}>
                     <Close />
                   </IconButton>
@@ -209,10 +220,14 @@ const CareerExplorer = () => {
                 <Typography variant="h6" gutterBottom color="primary">
                   Your Career Journey
                 </Typography>
-                <Stepper orientation={isMobile ? 'vertical' : 'horizontal'} alternativeLabel={!isMobile}>
-                  {selectedPath.steps.map((step) => (
-                    <Step key={step}>
-                      <StepLabel>{step}</StepLabel>
+                <Stepper
+                  orientation={isMobile ? 'vertical' : 'horizontal'}
+                  alternativeLabel={!isMobile}
+                >
+                  {/* Convert Map to an array and map over it */}
+                  {Object.entries(selectedPath.yourCareerJourney).map(([step, description], index) => (
+                    <Step key={index}>
+                      <StepLabel>{step}: {description}</StepLabel>
                     </Step>
                   ))}
                 </Stepper>
@@ -220,8 +235,8 @@ const CareerExplorer = () => {
                   Potential Careers
                 </Typography>
                 <List>
-                  {selectedPath.careers.map((career) => (
-                    <ListItem key={career}>
+                  {selectedPath.potentialCareers.map((career, index) => (
+                    <ListItem key={index}>
                       <ListItemAvatar>
                         <StyledAvatar>
                           <Work />
