@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Avatar, Typography, Button, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
-import Popup from './popup.jsx';
 
 const handleBookSession = async (mentor) => {
   const studentEmail = localStorage.getItem('userEmail');
@@ -23,9 +22,9 @@ const handleBookSession = async (mentor) => {
 
     const data = await res.json();
     if (data.success) {
-      alert(`✅ Meet link sent to your and mentor's email:\n${data.meetLink}`);
+      alert(`  Meet link sent to your and mentor's email:\n${data.meetLink}`);
     } else {
-      alert('❌ Could not send session invite email.');
+      alert('  Could not send session invite email.');
     }
   } catch (err) {
     console.error('Booking error:', err);
@@ -37,7 +36,6 @@ const MentorList = ({ searchTerm }) => {
   const [mentors, setMentors] = useState([]);
   const [filteredMentors, setFilteredMentors] = useState([]);
   const [error, setError] = useState(null);
-  const [isPopupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -155,7 +153,7 @@ const MentorList = ({ searchTerm }) => {
                         {Array(Math.floor(mentor.rating))
                           .fill(0)
                           .map((_, i) => (
-                            <span key={i}>★</span>
+                            <span key={i}> </span>
                           ))}
                         <span style={{ marginLeft: '4px', color: 'text.secondary' }}>
                           ({mentor.rating.toFixed(1)})
@@ -164,19 +162,6 @@ const MentorList = ({ searchTerm }) => {
                     </Box>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
-                      <Button
-                        variant="contained"
-                        size="medium"
-                        sx={{
-                          textTransform: 'none',
-                          borderRadius: '50px',
-                          bgcolor: 'primary.main',
-                          '&:hover': { bgcolor: 'primary.dark' },
-                        }}
-                        onClick={() => setPopupOpen(true)}
-                      >
-                        View Profile
-                      </Button>
                       <Button
                         variant="outlined"
                         size="medium"
@@ -199,10 +184,9 @@ const MentorList = ({ searchTerm }) => {
           ))}
         </Grid>
       </motion.div>
-
-      <Popup open={isPopupOpen} onClose={() => setPopupOpen(false)} />
     </Box>
   );
 };
 
 export default MentorList;
+
