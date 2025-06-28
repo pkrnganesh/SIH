@@ -1,6 +1,6 @@
-const OpenAI = require("openai");
-const CarrierModel = require("../models/CarrierModel");
-const dotenv = require("dotenv");
+import OpenAI from "openai";
+import CarrierModel from "../models/CarrierModel.js";
+import dotenv from "dotenv";
 dotenv.config();
 
 const token = process.env["GITHUB_TOKEN"];
@@ -9,7 +9,7 @@ const modelName = "gpt-4o";
 
 function extractJSONFromResponse(content) {
   // Try to find JSON content within markdown code blocks
-  const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
   if (jsonMatch && jsonMatch[1]) {
     return jsonMatch[1].trim();
   }
@@ -48,7 +48,7 @@ async function getCareerRecommendations(interests) {
     const careerData = dbdata.map(career => ({
       name: career.carrier_name,
       description: career.description,
-      id: career.carrier_id
+      id: career.carrier_id 
     }));
 
     console.log("Preparing messages for OpenAI API...");
@@ -78,13 +78,13 @@ async function getCareerRecommendations(interests) {
 
     // Enhance recommendations with additional data from the database
     const enhancedRecommendations = recommendations.map(rec => {
-      const fullData = dbdata.find(career => career.carrier_id === rec.id);
+      const fullData = dbdata.find(career => career.carrier_id === rec.id) || {};
       return {
         ...rec,
-        required_degree: fullData.required_degree,
-        key_skills: fullData.key_skills,
-        average_salary: fullData.average_salary,
-        job_outlook: fullData.job_outlook
+        required_degree: fullData.required_degree || null,
+        key_skills: fullData.key_skills || [],
+        average_salary: fullData.average_salary || null,
+        job_outlook: fullData.job_outlook || null
       };
     });
 
@@ -136,7 +136,7 @@ async function handleUserInput(userInput) {
 }
 
 // Export the functions
-module.exports = { 
+export { 
   handleUserInput, 
   getCareerRecommendations
 };
