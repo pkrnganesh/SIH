@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const Carrierroutes = require('./routes/CarrierRoutes');
 const AuthRoutes = require('./routes/authRoutes'); 
+const MentorAuthRoutes = require('./routes/mentorAuthRoutes');
 const intermediateCarrierPathRoutes = require('./routes/intermediateCarrierPathRoutes');
 const collegeRoutes = require('./routes/IntermediateCollegeRoutes'); // Adjust this path to match your routes
 const Intermediateexams=require('./routes/IntermediateExamRoutes');
+const BookingRoutes = require('./routes/BookingRoutes');
 
 const Mentorroutes = require('./routes/MentorRoutes');
 dotenv.config();
@@ -23,8 +25,10 @@ app.use(bodyParser.json());
 
 // Use the carrier and auth routes
 app.use('/carriers', Carrierroutes);
-app.use('/auth', AuthRoutes);  // Adding the auth routes
+app.use('/auth', AuthRoutes);  // Student auth routes
+app.use('/mentor-auth', MentorAuthRoutes);  // Mentor auth routes
 app.use('/mentors', Mentorroutes);
+app.use('/api', BookingRoutes);  // Booking routes
 app.use('/intermediate', intermediateCarrierPathRoutes);
 app.use('/intermediatecolleges', collegeRoutes); // Prefix routes related to colleges
 app.use('/intermediateexams',Intermediateexams);

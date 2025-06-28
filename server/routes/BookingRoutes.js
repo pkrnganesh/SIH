@@ -1,40 +1,26 @@
-// server/routes/BookingRoutes.js
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
-const { v4: uuidv4 } = require('uuid');
+const {
+  bookSession,
+  getUserBookings,
+  updateBookingStatus,
+  getBookingById,
+  getAllBookings
+} = require('../controllers/BookingController');
 
-// Setup Gmail SMTP
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'yourgmail@gmail.com',         // 🔁 your Gmail
-    pass: 'your-gmail-app-password'      // 🔁 create app password: https://myaccount.google.com/apppasswords
-  }
-});
+// Book a new session
+router.post('/book-session', bookSession);
 
-router.post('/book-session', async (req, res) => {
-  const { studentEmail, mentorEmail, mentorName } = req.body;
-  const meetLink = `https://meet.google.com/lookup/${uuidv4().slice(0, 10)}`;
+// Get bookings for a specific user
+router.get('/bookings', getUserBookings);
 
-  const mailOptions = {
-    from: '"DreamTrax Booking" <yourgmail@gmail.com>',
-    to: [studentEmail, mentorEmail],
-    subject: `Session Booked with ${mentorName}`,
-    html: `
-      <p>Your session with <b>${mentorName}</b> has been scheduled.</p>
-      <p><b>Google Meet:</b> <a href="${meetLink}">${meetLink}</a></p>
-      <p>See you soon!</p>
-    `
-  };
+// Get all bookings (admin)
+router.get('/bookings/all', getAllBookings);
 
-  try {
-    await transporter.sendMail(mailOptions);
-    res.json({ success: true, meetLink });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Email failed' });
-  }
-});
+// Get booking by ID
+router.get('/bookings/:bookingId', getBookingById);
+
+// Update booking status
+router.put('/bookings/:bookingId/status', updateBookingStatus);
 
 module.exports = router;

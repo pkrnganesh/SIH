@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  CssBaseline, Box, Typography, Chip, Avatar, Button, IconButton,
-  Paper, Drawer, List, ListItem, ListItemIcon, ListItemText,
-  AppBar, Toolbar, Table, TableBody, TableCell, TableHead, TableRow
+  Box, Drawer, List, ListItem, ListItemIcon, ListItemText, 
+  AppBar, Toolbar, Typography, IconButton, Paper, 
+  Avatar, Button, Table, TableHead, TableBody, TableRow, TableCell,
+  Chip
 } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import {
-  Dashboard as DashboardIcon, EventAvailable as EventAvailableIcon, CalendarToday as CalendarIcon,
-  Edit as EditIcon, VideoCall as VideoCallIcon, Search as SearchIcon, Brightness4 as DarkModeIcon,
-  Person as PersonIcon
+  Dashboard as DashboardIcon, CalendarToday as CalendarIcon,
+  Search as SearchIcon, DarkMode as DarkModeIcon,
+  Logout as LogoutIcon, Edit as EditIcon, VideoCall as VideoCallIcon,
+  EventAvailable as EventAvailableIcon
 } from '@mui/icons-material';
+
+import { lightTheme } from '../components/Landing/theme';
+import UserBookings from '../components/MeetingScheduler/UserBookings';
+import MentorSessionManager from '../utils/mentorSessionManager';
 
 // Theme setup
 const theme = createTheme({
@@ -134,8 +142,33 @@ const UpcomingSessions = () => {
 };
 
 // Main Application component
-const Dashboard = () => (
-  <ThemeProvider theme={theme}>
+const MentorDashboard = () => {
+  const navigate = useNavigate();
+  const [currentMentor, setCurrentMentor] = useState(null);
+
+  // Session management - redirect to login if not authenticated
+  useEffect(() => {
+    if (!MentorSessionManager.isAuthenticated()) {
+      navigate('/mentor-login');
+      return;
+    }
+    
+    // Check for expired token
+    if (MentorSessionManager.checkAndHandleExpiredToken(navigate)) {
+      return;
+    }
+
+    // Set current mentor data
+    setCurrentMentor(MentorSessionManager.getCurrentMentor());
+  }, [navigate]);
+
+  const handleLogout = () => {
+    MentorSessionManager.clearSession();
+    navigate('/mentor-login');
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
     <CssBaseline />
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
@@ -145,16 +178,25 @@ const Dashboard = () => (
             <Typography variant="h6" sx={{ flexGrow: 1 }}>Dashboard</Typography>
             <IconButton><SearchIcon /></IconButton>
             <IconButton><DarkModeIcon /></IconButton>
-            <IconButton><PersonIcon /></IconButton>
+            <IconButton onClick={handleLogout}><LogoutIcon /></IconButton>
           </Toolbar>
         </AppBar>
         <Box sx={{ p: 3 }}>
           <ProfileHeader />
           <UpcomingSessions />
+          {currentMentor && (
+            <Box sx={{ mt: 4 }}>
+              <UserBookings 
+                userEmail={currentMentor.email} 
+                userType="mentor" 
+              />
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>
   </ThemeProvider>
-);
+  );
+};
 
-export default Dashboard;
+export default MentorDashboard;

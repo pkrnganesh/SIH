@@ -1,4 +1,5 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, Box } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,15 +7,16 @@ import { styled } from '@mui/material/styles';
 
 import { lightTheme, darkTheme } from '../components/Landing/theme';
 import Header from '../components/Landing/Header';
-import Hero from '../components/Student/Hero';
-import Footer from '../components/Landing/Footer';
-import TrendingPaths from '../components/Student/TrendingPaths';
-import Examinations from '../components/Student/Examinations';
-import AdvisoryNotes from '../components/Student/AdvisoryNotes';
-import LatestNews from '../components/Student/LatestNews';
+import ModernHero from '../components/Student/ModernHero';
+import ModernTrendingPaths from '../components/Student/ModernTrendingPaths';
+import ModernExaminations from '../components/Student/ModernExaminations';
+import ModernAdvisoryNotes from '../components/Student/ModernAdvisoryNotes';
+import ModernLatestNews from '../components/Student/ModernLatestNews';
+import UserBookings from '../components/MeetingScheduler/UserBookings';
+import SessionManager from '../utils/sessionManager';
 
-// Clean, minimal styled components
-const CleanContainer = styled(Box)(({ theme }) => ({
+// Clean white background
+const ModernContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   background: '#ffffff',
   minHeight: '100vh',
@@ -23,61 +25,116 @@ const CleanContainer = styled(Box)(({ theme }) => ({
 
 const ContentWrapper = styled(Box)({
   position: 'relative',
-  maxWidth: '1200px',
+  zIndex: 1,
+  maxWidth: '1400px',
   margin: '0 auto',
-  padding: '0 20px',
+  padding: '0 24px',
 });
 
-const SectionDivider = styled(Box)(({ theme }) => ({
+const GlassSectionDivider = styled(Box)(({ theme }) => ({
   height: '60px',
   background: 'transparent',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  margin: '40px 0',
   '&::after': {
     content: '""',
-    width: '60px',
+    width: '80px',
     height: '1px',
-    background: 'linear-gradient(90deg, transparent, #e0e0e0, transparent)',
+    background: '#e2e8f0',
+    borderRadius: '1px',
   },
 }));
 
 function StudentDashboard() {
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const theme = darkMode ? darkTheme : lightTheme;
+
+  // Session management - redirect to login if not authenticated
+  useEffect(() => {
+    if (!SessionManager.isAuthenticated()) {
+      navigate('/student-login');
+      return;
+    }
+    
+    // Check for expired token
+    if (SessionManager.checkAndHandleExpiredToken(navigate)) {
+      return;
+    }
+
+    // Set current user data
+    setCurrentUser(SessionManager.getCurrentUser());
+  }, [navigate]);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <CleanContainer>
+      <ModernContainer>
         <AnimatePresence>
           <motion.div 
             key="dashboard-content" 
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             style={{ position: 'relative' }}
           >
             <ContentWrapper>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={
+                <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      border: '4px solid rgba(255,255,255,0.3)',
+                      borderTop: '4px solid #ffffff',
+                      borderRadius: '50%',
+                    }}
+                  />
+                </Box>
+              }>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <Hero />
-                <SectionDivider />
-                <TrendingPaths />
-                <SectionDivider />
-                <Examinations />
-                <SectionDivider />
-                <LatestNews />
-                <SectionDivider />
-                <AdvisoryNotes />
+                <ModernHero onResultsShow={setShowResults} />
+                
+                <AnimatePresence>
+                  {showResults && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -50 }}
+                      transition={{ duration: 0.8, delay: 0.2 }}
+                    >
+                      <GlassSectionDivider />
+                      <ModernTrendingPaths />
+                      <GlassSectionDivider />
+                      <ModernExaminations />
+                      <GlassSectionDivider />
+                      <ModernLatestNews />
+                      <GlassSectionDivider />
+                      <ModernAdvisoryNotes />
+                      <GlassSectionDivider />
+                      {currentUser && (
+                        <UserBookings 
+                          userEmail={currentUser.email} 
+                          userType="student" 
+                        />
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </Suspense>
             </ContentWrapper>
           </motion.div>
         </AnimatePresence>
-      </CleanContainer>
+      </ModernContainer>
     </ThemeProvider>
   );
 }

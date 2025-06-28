@@ -1,4 +1,5 @@
-import {React,useState} from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -9,10 +10,11 @@ import {
   Grid,
   Paper,
   ThemeProvider,
-  createTheme,
   Snackbar,
   Alert,
+  CircularProgress,
 } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { Route } from "lucide-react";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import SchoolIcon from "@mui/icons-material/School";
@@ -67,6 +69,7 @@ const FeatureItem = ({ icon, title, description }) => (
 );
 
 const CareerGuidanceSignup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     user_email: "",
     user_name: "",
@@ -75,6 +78,8 @@ const CareerGuidanceSignup = () => {
     user_password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -82,19 +87,78 @@ const CareerGuidanceSignup = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.user_email) {
+      newErrors.user_email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.user_email)) {
+      newErrors.user_email = "Email is invalid";
+    }
+    
+    if (!formData.user_name) {
+      newErrors.user_name = "Full name is required";
+    }
+    
+    if (!formData.user_password) {
+      newErrors.user_password = "Password is required";
+    } else if (formData.user_password.length < 6) {
+      newErrors.user_password = "Password must be at least 6 characters";
+    }
+    
+    if (!formData.user_school) {
+      newErrors.user_school = "School/University is required";
+    }
+    
+    if (!formData.user_phonenumber) {
+      newErrors.user_phonenumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.user_phonenumber.replace(/\D/g, ''))) {
+      newErrors.user_phonenumber = "Phone number must be 10 digits";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setLoading(true);
     try {
       const data = await signup(formData);
       setSnackbar({
         open: true,
-        message: data.message || "Signup successful!",
+        message: data.message || "Signup successful! Redirecting to login...",
         severity: "success",
       });
-      // You might want to redirect the user or clear the form here
+      
+      // Clear form
+      setFormData({
+        user_email: "",
+        user_name: "",
+        user_school: "",
+        user_phonenumber: "",
+        user_password: "",
+      });
+      
+      // Redirect to login page after 2 seconds
+      setTimeout(() => {
+        navigate('/student-login');
+      }, 2000);
+      
     } catch (error) {
       console.error("Signup error:", error);
       setSnackbar({
@@ -102,6 +166,8 @@ const CareerGuidanceSignup = () => {
         message: error.message || "An error occurred during signup",
         severity: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +176,10 @@ const CareerGuidanceSignup = () => {
       return;
     }
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleLoginClick = () => {
+    navigate('/student-login');
   };
 
   return (
@@ -203,6 +273,8 @@ const CareerGuidanceSignup = () => {
                   sx={{ mb: 2, borderRadius: 8 }}
                   value={formData.user_email}
                   onChange={handleChange}
+                  error={!!errors.user_email}
+                  helperText={errors.user_email}
                 />
                 <br />
                 <br />
@@ -220,6 +292,8 @@ const CareerGuidanceSignup = () => {
                       sx={{ mb: 2, borderRadius: 8 }}
                       value={formData.user_name}
                       onChange={handleChange}
+                      error={!!errors.user_name}
+                      helperText={errors.user_name}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -236,6 +310,8 @@ const CareerGuidanceSignup = () => {
                       sx={{ borderRadius: 8 }}
                       value={formData.user_password}
                       onChange={handleChange}
+                      error={!!errors.user_password}
+                      helperText={errors.user_password}
                     />
                   </Grid>
                 </Grid>
@@ -261,6 +337,8 @@ const CareerGuidanceSignup = () => {
                       sx={{ mb: 2, mt: 2, borderRadius: 8 }}
                       value={formData.user_school}
                       onChange={handleChange}
+                      error={!!errors.user_school}
+                      helperText={errors.user_school}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -284,6 +362,8 @@ const CareerGuidanceSignup = () => {
                       sx={{ mb: 2, borderRadius: 8 }}
                       value={formData.user_phonenumber}
                       onChange={handleChange}
+                      error={!!errors.user_phonenumber}
+                      helperText={errors.user_phonenumber}
                     />
                   </Grid>
                 </Grid>
@@ -307,15 +387,21 @@ const CareerGuidanceSignup = () => {
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={loading}
                   sx={{
                     mt: 2,
                     mb: 2,
                     py: 1.5,
                     borderRadius: 10,
                     marginLeft: "130px",
+                    position: "relative",
                   }}
                 >
-                  Start Your Career Journey
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Start Your Career Journey"
+                  )}
                 </Button>
               </Box>
             </Paper>
@@ -340,7 +426,7 @@ const CareerGuidanceSignup = () => {
                 </Typography>
                 </Grid>
                 <Button
-                  type="submit"
+                  onClick={handleLoginClick}
                   variant="contained"
                   sx={{
                     mt: 2,
@@ -348,7 +434,7 @@ const CareerGuidanceSignup = () => {
                     py: 1.5,
                     borderRadius: 5,
                     marginLeft: "180px",
-                  }} // Add borderRadius here
+                  }}
                 >
                   Login
                 </Button>

@@ -2,54 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Avatar, Typography, Button, Grid } from '@mui/material';
 import { motion } from 'framer-motion';
 import Popup from './popup.jsx';
-
-const handleBookSession = async (mentor) => {
-  const studentEmail = localStorage.getItem('userEmail');
-  if (!studentEmail) {
-    alert("Please log in to book a session.");
-    return;
-  }
-
-  try {
-    const res = await fetch('http://localhost:700/api/book-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        studentEmail,
-        mentorEmail: mentor.email,
-        mentorName: mentor.name
-      })
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert(`✅ Meet link sent to your and mentor's email:\n${data.meetLink}`);
-    } else {
-      alert('❌ Could not send session invite email.');
-    }
-  } catch (err) {
-    console.error('Booking error:', err);
-    alert('Server error. Please try again.');
-  }
-};
+import BookingModal from '../MeetingScheduler/BookingModal.jsx';
 
 const MentorList = ({ searchTerm }) => {
   const [mentors, setMentors] = useState([]);
   const [filteredMentors, setFilteredMentors] = useState([]);
   const [error, setError] = useState(null);
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [isBookingModalOpen, setBookingModalOpen] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState(null);
+
+  const handleBookSession = (mentor) => {
+    setSelectedMentor(mentor);
+    setBookingModalOpen(true);
+  };
 
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const response = await fetch('http://localhost:700/mentors');
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL || 'http://localhost:700'}/mentors`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setMentors(data);
-        setFilteredMentors(data);
+        
+        // Ensure each mentor has required properties with fallbacks
+        const normalizedMentors = data.map(mentor => ({
+          ...mentor,
+          specializations: mentor.specializations || [],
+          rating: mentor.rating || 0,
+          name: mentor.name || 'Unknown Mentor',
+          title: mentor.title || 'Mentor',
+          image: mentor.image || null
+        }));
+        
+        setMentors(normalizedMentors);
+        setFilteredMentors(normalizedMentors);
       } catch (error) {
         console.error('Error fetching mentors:', error);
         setError(error.message);
+        // Set empty arrays to prevent map errors
+        setMentors([]);
+        setFilteredMentors([]);
       }
     };
 
@@ -59,7 +51,7 @@ const MentorList = ({ searchTerm }) => {
   useEffect(() => {
     if (searchTerm) {
       const results = mentors.filter(mentor =>
-        mentor.specializations.some(spec =>
+        mentor.specializations && mentor.specializations.some(spec =>
           spec.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
@@ -70,7 +62,7 @@ const MentorList = ({ searchTerm }) => {
   }, [searchTerm, mentors]);
 
   if (error) return <Typography color="error">Error: {error}</Typography>;
-  if (mentors.length === 0) return <Typography>Loading mentors...</Typography>;
+  if (!mentors || mentors.length === 0) return <Typography>Loading mentors...</Typography>;
 
   return (
     <Box sx={{ textAlign: 'center', mb: 4 }}>
@@ -83,7 +75,7 @@ const MentorList = ({ searchTerm }) => {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <Grid container spacing={4}>
-          {filteredMentors.map((mentor) => (
+          {filteredMentors && filteredMentors.length > 0 ? filteredMentors.map((mentor) => (
             <Grid item xs={12} sm={6} md={4} key={mentor._id}>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -122,7 +114,7 @@ const MentorList = ({ searchTerm }) => {
                       </Typography>
 
                       <Box sx={{ mt: 2 }}>
-                        {mentor.specializations.map((spec, index) => (
+                        {mentor.specializations && mentor.specializations.map((spec, index) => (
                           <Typography
                             key={index}
                             variant="body2"
@@ -152,13 +144,13 @@ const MentorList = ({ searchTerm }) => {
                           color: 'warning.main',
                         }}
                       >
-                        {Array(Math.floor(mentor.rating))
+                        {mentor.rating && Array(Math.floor(mentor.rating))
                           .fill(0)
                           .map((_, i) => (
                             <span key={i}>★</span>
                           ))}
                         <span style={{ marginLeft: '4px', color: 'text.secondary' }}>
-                          ({mentor.rating.toFixed(1)})
+                          ({mentor.rating ? mentor.rating.toFixed(1) : '0.0'})
                         </span>
                       </Typography>
                     </Box>
@@ -196,11 +188,22 @@ const MentorList = ({ searchTerm }) => {
                 </Card>
               </motion.div>
             </Grid>
-          ))}
+          )) : (
+            <Grid item xs={12}>
+              <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
+                No mentors found matching your search.
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </motion.div>
 
       <Popup open={isPopupOpen} onClose={() => setPopupOpen(false)} />
+      <BookingModal 
+        open={isBookingModalOpen} 
+        onClose={() => setBookingModalOpen(false)} 
+        mentor={selectedMentor}
+      />
     </Box>
   );
 };
