@@ -1,6 +1,9 @@
-import OpenAI from "openai";
-import CarrierModel from "../models/CarrierModel.js";
-import dotenv from "dotenv";
+// import OpenAI from "openai";
+const OpenAI = require("openai");
+// import CarrierModel from "../models/CarrierModel.js";
+const CarrierModel = require("../models/CarrierModel");
+// import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
 const token = process.env["GITHUB_TOKEN"];
@@ -136,7 +139,7 @@ async function handleUserInput(userInput) {
 }
 
 // Export the functions
-export { 
+module.exports = { 
   handleUserInput, 
   getCareerRecommendations
 };
