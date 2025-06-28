@@ -1,12 +1,28 @@
 const express = require('express');
-const {getCarriers, createCarriers, updateCarrier,getCareerAnalysis, deleteCarrier,getCareerGuidance} = require('../controllers/CarrierController');
+const {
+  sendSMS,
+  sendWhatsApp,
+  sendEmail,
+  sendBulkNotifications,
+  getNotificationStatus
+} = require('../controllers/notificationController');
 
-const router = express();
+const router = express.Router();
 
-router.get('/send-message-sms', getCarriers);
-router.post('/send-message-whatsapp', createCarriers); // Ensure createCarriers is defined and exported from carrierController
-router.put('/send-message-email', updateCarrier);
+// Individual notification routes
+router.post('/send-sms', sendSMS);
+router.post('/send-whatsapp', sendWhatsApp);
+router.post('/send-email', sendEmail);
 
+// Bulk notification route
+router.post('/send-bulk', sendBulkNotifications);
 
+// Status check route
+router.get('/status/:messageSid', getNotificationStatus);
+
+// Legacy routes (keeping for backward compatibility)
+router.get('/send-message-sms', sendSMS);
+router.post('/send-message-whatsapp', sendWhatsApp);
+router.put('/send-message-email', sendEmail);
 
 module.exports = router;    
