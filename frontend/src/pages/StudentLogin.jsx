@@ -13,24 +13,19 @@ import {
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import GoogleIcon from "@mui/icons-material/Google";
-import login from '../api/auth/login';
+import login from "../api/auth/login";
 
-// Create a custom theme
+// Theme
 const theme = createTheme({
   palette: {
-    primary: {
-      main: "#6200EE",
-    },
-    secondary: {
-      main: "#ffffff",
-    },
+    primary: { main: "#6200EE" },
+    secondary: { main: "#ffffff" },
   },
   typography: {
     fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
-    h3: {
-      fontWeight: 700,
-    },
+    h3: { fontWeight: 700 },
   },
+  overflow: "hidden",
 });
 
 const StudentLogin = () => {
@@ -58,24 +53,15 @@ const StudentLogin = () => {
         message: "Login successful!",
         severity: "success",
       });
-      // Store the token in localStorage or a secure storage method
       localStorage.setItem("token", data.token);
-      // You might want to redirect the user here
+      window.location.href = "/";
     } catch (error) {
-      console.error("Login error:", error);
       setSnackbar({
         open: true,
-        message: error.message || "An error occurred during login",
+        message: error.message || "Login failed",
         severity: "error",
       });
     }
-  };
-
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -83,120 +69,140 @@ const StudentLogin = () => {
       <Box
         sx={{
           display: "flex",
-          minHeight: "100vh",
-          bgcolor: "white",
+          height: "100vh",
+          overflow: "hidden",
         }}
       >
-        <Grid container justifyContent="center" alignItems="center">
-          <Grid item xs={12} md={5}>
-            <Paper
-              elevation={3}
+        {/* Left Panel */}
+        <Box
+          sx={{
+            width: "50%",
+            background: "linear-gradient(135deg, #6A1B9A, #8E24AA)",
+            color: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 4,
+          }}
+        >
+          <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
+            DreamTrax
+          </Typography>
+          <Typography variant="h6" align="center" sx={{ mb: 3, maxWidth: "80%" }}>
+            Your personalized career companion. Connect with top mentors and book sessions to shape your future.
+          </Typography>
+          <Box
+            component="img"
+            src="https://www.svgrepo.com/show/491939/online-consultation.svg"
+            alt="Career Counseling Illustration"
+            sx={{
+              width: "80%",
+              maxWidth: 400,
+              mt: 2,
+              filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.3))",
+            }}
+          />
+        </Box>
+
+        {/* Right Panel */}
+        <Box
+          sx={{
+            width: "50%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#f9f9f9",
+          }}
+        >
+          <Paper
+            elevation={4}
+            sx={{
+              borderRadius: 4,
+              padding: 5,
+              width: "100%",
+              maxWidth: 400,
+              boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Typography variant="h4" sx={{ mb: 1, color: "#6200EE", fontWeight: 600 }}>
+              Welcome Back
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, color: "#555" }}>
+              Log in to continue your journey on DreamTrax
+            </Typography>
+
+            <form onSubmit={handleSubmit}>
+              <TextField
+                label="Email Address"
+                name="user_email"
+                type="email"
+                required
+                fullWidth
+                margin="normal"
+                value={formData.user_email}
+                onChange={handleChange}
+              />
+              <TextField
+                label="Password"
+                name="user_password"
+                type="password"
+                required
+                fullWidth
+                margin="normal"
+                value={formData.user_password}
+                onChange={handleChange}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 2, py: 1.5, borderRadius: 2 }}
+              >
+                LOG IN
+              </Button>
+            </form>
+
+            <Divider sx={{ my: 3 }}>OR</Divider>
+
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<GoogleIcon />}
               sx={{
-                borderRadius: 10,
-                border: 2,
-                borderColor: "#6200EE",
-                marginTop: "60px",
-                padding: 4,
-                textAlign: "left",
+                textTransform: "none",
+                py: 1.2,
+                borderRadius: 2,
               }}
             >
-              <Typography
-                variant="h3"
-                component="h1"
-                gutterBottom
-                sx={{ mb: 3, color: "BLACK" }}
-              >
-                Welcome Back!
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                gutterBottom
-                sx={{ mb: 6, color: "text.secondary" }}
-              >
-                Log in to access your DreamTrax account
-              </Typography>
-            
-              <form onSubmit={handleSubmit}>
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
-                  Email Address
-                </Typography>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="user_email"
-                  label="Email Address"
-                  name="user_email"
-                  autoComplete="email"
-                  autoFocus
-                  sx={{ mb: 4, borderRadius: 8 }}
-                  value={formData.user_email}
-                  onChange={handleChange}
-                />
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 2 }}>
-                  Password
-                </Typography>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  type="password"
-                  id="user_password"
-                  label="Password"
-                  name="user_password"
-                  autoComplete="current-password"
-                  sx={{ mb: 4, borderRadius: 8 }}
-                  value={formData.user_password}
-                  onChange={handleChange}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  sx={{
-                    mt: 2,
-                    mb: 2,
-                    py: 1.5,
-                    borderRadius: 10,
-                    width: "60%",
-                    textAlign:"center",
-                    marginLeft:"70px"
-                  }}
-                >
-                  Log In
-                </Button>
-              </form>
-              <Divider sx={{ mb: 4 }}>or</Divider>
+              Continue with Google
+            </Button>
 
-              <Button
-                variant="outlined"
-                startIcon={<GoogleIcon />}
-                fullWidth
-                sx={{ mb: 2, textTransform: "none" }}
-              >
-                Continue with Google
+            <Typography variant="body2" sx={{ mt: 3, textAlign: "center" }}>
+              Don’t have an account?{" "}
+              <Button href="/signup" sx={{ color: "#6200EE", fontWeight: 600 }}>
+                Sign Up
               </Button>
-              <Typography variant="body2" sx={{ mt: 3 }}>
-                Don't have an account?{" "}
-                <Button href="/signup" sx={{ color: "primary.main" }}>
-                  Sign Up
-                </Button>
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
+            </Typography>
+          </Paper>
+        </Box>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </ThemeProvider>
   );
 };
 
 export default StudentLogin;
+

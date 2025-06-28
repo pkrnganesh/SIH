@@ -260,7 +260,7 @@ async function handleUserInput(userInput) {
 }
 
 // Export the functions
-export { 
+module.exports = { 
   handleUserInput, 
   getCareerRecommendations
 };
