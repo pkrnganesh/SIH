@@ -1,8 +1,9 @@
-const ModelClient = require("@azure-rest/ai-inference").default;
-const { isUnexpected } = require("@azure-rest/ai-inference");
-const { AzureKeyCredential } = require("@azure/core-auth");
-const CarrierModel = require("../models/CarrierModel");
-const dotenv = require("dotenv");
+import { default as ModelClient } from "@azure-rest/ai-inference";
+import { isUnexpected } from "@azure-rest/ai-inference";
+import { AzureKeyCredential } from "@azure/core-auth";
+import CarrierModel from "../models/CarrierModel.js";
+
+import dotenv from "dotenv";
 dotenv.config();
 
 const token = process.env["GITHUB_TOKEN"];
