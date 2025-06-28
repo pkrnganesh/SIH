@@ -147,7 +147,7 @@ const MentorList = ({ searchTerm }) => {
                         {mentor.rating && Array(Math.floor(mentor.rating))
                           .fill(0)
                           .map((_, i) => (
-                            <span key={i}>★</span>
+                            <span key={i}> </span>
                           ))}
                         <span style={{ marginLeft: '4px', color: 'text.secondary' }}>
                           ({mentor.rating ? mentor.rating.toFixed(1) : '0.0'})
@@ -156,19 +156,6 @@ const MentorList = ({ searchTerm }) => {
                     </Box>
 
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mt: 2 }}>
-                      <Button
-                        variant="contained"
-                        size="medium"
-                        sx={{
-                          textTransform: 'none',
-                          borderRadius: '50px',
-                          bgcolor: 'primary.main',
-                          '&:hover': { bgcolor: 'primary.dark' },
-                        }}
-                        onClick={() => setPopupOpen(true)}
-                      >
-                        View Profile
-                      </Button>
                       <Button
                         variant="outlined"
                         size="medium"
@@ -209,3 +196,4 @@ const MentorList = ({ searchTerm }) => {
 };
 
 export default MentorList;
+

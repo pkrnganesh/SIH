@@ -32,6 +32,8 @@ app.use('/api', BookingRoutes);  // Booking routes
 app.use('/intermediate', intermediateCarrierPathRoutes);
 app.use('/intermediatecolleges', collegeRoutes); // Prefix routes related to colleges
 app.use('/intermediateexams',Intermediateexams);
+app.use('/notifications', NotificationController); // Prefix routes related to notifications
+app.use('/booking', BookingRoutes); // Prefix routes related to booking sessions
 // Connect to MongoDB
 
 mongoose.connect(process.env.MONGODB_URI, {

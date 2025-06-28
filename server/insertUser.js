@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 // Load your User schema
 const User = require("./models/UserModel"); // Adjust this path if needed
 
-const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://pothamsettikodanda:Kalikamatha%40123@clusterletter.jv5sr9f.mongodb.net/carrierguidance?retryWrites=true&w=majority&appName=ClusterLetter";
+const MONGO_URI = process.env.MONGODB_URI;
 
 const createUser = async () => {
   try {
