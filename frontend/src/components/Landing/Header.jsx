@@ -1,35 +1,333 @@
 // components/Header.js
-import React from "react";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Button, 
+  Box, 
+  IconButton,
+  Menu,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider
+} from "@mui/material";
 import { styled } from "@mui/system";
+import { motion } from "framer-motion";
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-const Header = () => {
-  const StyledAppBar = styled(AppBar)(({ theme }) => ({
-    backgroundColor: "rgba(30, 30, 30, 0)",
-    color: "#FFFFFF",
-  }));
+const StyledAppBar = styled(AppBar)(({ theme, scrolled }) => ({
+  backgroundColor: scrolled 
+    ? 'rgba(255, 255, 255, 0.95)' 
+    : 'rgba(255, 255, 255, 0)',
+  backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'none',
+  borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  boxShadow: scrolled 
+    ? '0 8px 32px rgba(0, 0, 0, 0.08)' 
+    : 'none',
+}));
 
-  const StyledTypography = styled(Typography)(({ theme }) => ({
-    fontFamily: '"Poppins", sans-serif',
-    fontWeight: 600,
-    color: "#E0E0E0",
-  }));
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  padding: theme.spacing(0, 4),
+  minHeight: '80px',
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(0, 2),
+    minHeight: '70px',
+  },
+}));
+
+const Logo = styled(motion(Typography))(({ theme, scrolled }) => ({
+  fontFamily: '"Playfair Display", serif',
+  fontWeight: 700,
+  fontSize: '2rem',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+}));
+
+const NavButton = styled(motion(Button))(({ theme }) => ({
+  fontWeight: 500,
+  fontSize: '0.95rem',
+  padding: theme.spacing(1, 2),
+  borderRadius: '12px',
+  textTransform: 'none',
+  color: theme.palette.text.primary,
+  position: 'relative',
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+    transition: 'left 0.5s',
+  },
+  '&:hover': {
+    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+    '&::before': {
+      left: '100%',
+    },
+  },
+}));
+
+const PremiumButton = styled(motion(Button))(({ theme }) => ({
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  color: 'white',
+  fontWeight: 600,
+  padding: theme.spacing(1.2, 3),
+  borderRadius: '25px',
+  textTransform: 'none',
+  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+  border: 'none',
+  position: 'relative',
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+    opacity: 0,
+    transition: 'opacity 0.3s ease',
+  },
+  '&:hover': {
+    transform: 'translateY(-2px)',
+    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+    '&::before': {
+      opacity: 1,
+    },
+    '& .MuiButton-label': {
+      position: 'relative',
+      zIndex: 1,
+    },
+  },
+}));
+
+const MobileDrawer = styled(Drawer)(({ theme }) => ({
+  '& .MuiDrawer-paper': {
+    width: 280,
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 250, 250, 0.95) 100%)',
+    backdropFilter: 'blur(20px)',
+    border: 'none',
+  },
+}));
+
+const Header = ({ darkMode, toggleDarkMode }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [servicesAnchor, setServicesAnchor] = useState(null);
+
+  const navigationItems = [
+    { label: 'Home', href: '#home' },
+    { label: 'Features', href: '#features' },
+    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '#contact' },
+  ];
+
+  const serviceItems = [
+    { label: 'Career Guidance', href: '/guidance' },
+    { label: 'Mentorship', href: '/mentorship' },
+    { label: 'AI Analysis', href: '/ai-analysis' },
+    { label: 'Course Recommendations', href: '/courses' },
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleServicesClick = (event) => {
+    setServicesAnchor(event.currentTarget);
+  };
+
+  const handleServicesClose = () => {
+    setServicesAnchor(null);
+  };
+
+  const drawer = (
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Logo>DreamTrax</Logo>
+        <IconButton onClick={handleDrawerToggle}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Divider />
+      <List sx={{ flexGrow: 1, px: 2 }}>
+        {navigationItems.map((item) => (
+          <ListItem key={item.label} sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{ fontWeight: 500 }}
+            />
+          </ListItem>
+        ))}
+        <ListItem sx={{ borderRadius: 2, mb: 1 }}>
+          <ListItemText 
+            primary="Services" 
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
+        </ListItem>
+        {serviceItems.map((item) => (
+          <ListItem key={item.label} sx={{ borderRadius: 2, mb: 1, pl: 4 }}>
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{ fontSize: '0.9rem', color: 'text.secondary' }}
+            />
+          </ListItem>
+        ))}
+      </List>
+      <Box sx={{ p: 3 }}>
+        <PremiumButton fullWidth>
+          Get Started
+        </PremiumButton>
+      </Box>
+    </Box>
+  );
 
   return (
-    <StyledAppBar position="fixed" elevation={0}>
-      <Toolbar>
-        <StyledTypography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, color: "black",cursor:'pointer' }}
-          onClick={() => {
-            window.location.href = "/";
-          }}
-        >
-          DreamTrax{" "}
-        </StyledTypography>
-      </Toolbar>
-    </StyledAppBar>
+    <>
+      <StyledAppBar position="fixed" elevation={0} scrolled={scrolled}>
+        <StyledToolbar>
+          <Logo
+            onClick={() => window.location.href = "/"}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            DreamTrax
+          </Logo>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {navigationItems.map((item) => (
+                <NavButton
+                  key={item.label}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ y: 0 }}
+                >
+                  {item.label}
+                </NavButton>
+              ))}
+              
+              <NavButton
+                onClick={handleServicesClick}
+                endIcon={<KeyboardArrowDownIcon />}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
+              >
+                Services
+              </NavButton>
+
+              <IconButton 
+                onClick={toggleDarkMode}
+                sx={{ mx: 1, color: 'text.primary' }}
+              >
+                {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+
+              <PremiumButton
+                whileHover={{ y: -2, scale: 1.05 }}
+                whileTap={{ y: 0, scale: 0.95 }}
+              >
+                Get Started
+              </PremiumButton>
+            </Box>
+          )}
+
+          {isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton 
+                onClick={toggleDarkMode}
+                sx={{ color: 'text.primary' }}
+              >
+                {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+              <IconButton
+                onClick={handleDrawerToggle}
+                sx={{ color: 'text.primary' }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          )}
+        </StyledToolbar>
+      </StyledAppBar>
+
+      <Menu
+        anchorEl={servicesAnchor}
+        open={Boolean(servicesAnchor)}
+        onClose={handleServicesClose}
+        PaperProps={{
+          sx: {
+            mt: 1,
+            borderRadius: 3,
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(20px)',
+            minWidth: 200,
+          }
+        }}
+      >
+        {serviceItems.map((item) => (
+          <MenuItem 
+            key={item.label} 
+            onClick={handleServicesClose}
+            sx={{ 
+              py: 1.5,
+              borderRadius: 2,
+              mx: 1,
+              mb: 0.5,
+              '&:hover': {
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              }
+            }}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <MobileDrawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+      >
+        {drawer}
+      </MobileDrawer>
+    </>
   );
 };
 

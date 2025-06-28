@@ -9,38 +9,89 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
-  background: 'white',
+  background: 'rgba(255, 255, 255, 0.95)',
   position: 'relative',
   overflow: 'hidden',
-  // marginTop: '-50px',
+  borderRadius: '24px 24px 0 0',
+  margin: '0 -20px',
+  paddingLeft: '20px',
+  paddingRight: '20px',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpolygon fill='%23f8faff' opacity='0.5' points='0,20 20,0 40,10 60,5 80,15 100,0 100,20'/%3E%3C/svg%3E") repeat-x`,
+    backgroundSize: '200px 40px',
+    opacity: 0.3,
+  },
 }));
 
 const GlassCard = styled(motion.div)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 0.7)',
-  borderRadius: theme.spacing(2),
-  padding: theme.spacing(2),
-  backdropFilter: 'blur(10px)',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
-  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+  borderRadius: '20px',
+  padding: theme.spacing(3),
+  backdropFilter: 'blur(15px)',
+  border: '2px solid rgba(102, 126, 234, 0.2)',
+  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.15)',
   display: 'flex',
   flexDirection: 'column',
-  height: '220px',
-  transition: 'all 0.3s ease-in-out',
+  height: '280px',
+  transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+  position: 'relative',
+  overflow: 'hidden',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+    transform: 'translateY(-10px) scale(1.02)',
+    boxShadow: '0 20px 40px rgba(102, 126, 234, 0.25)',
+    border: '2px solid rgba(102, 126, 234, 0.4)',
+    '&::before': {
+      opacity: 1,
+    },
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+    opacity: 0.7,
+    transition: 'opacity 0.3s ease',
   },
 }));
 
 const IconWrapper = styled(Box)({
-  width: '50px',
-  height: '50px',
-  borderRadius: '50%',
+  width: '60px',
+  height: '60px',
+  borderRadius: '16px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  marginBottom: '16px',
-  fontSize: '24px',
+  marginBottom: '20px',
+  fontSize: '28px',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+  color: 'white',
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+    borderRadius: '16px',
+    transform: 'translate(-50%, -50%) scale(0)',
+    transition: 'transform 0.3s ease',
+    zIndex: -1,
+  },
+  '&:hover::after': {
+    transform: 'translate(-50%, -50%) scale(1)',
+  },
 });
 
 const StyledSlider = styled(Slider)({
@@ -138,8 +189,29 @@ const TrendingPaths = () => {
   return (
     <StyledBox>
       <Container maxWidth="xl">
-        <Typography variant="h3" component="h2" align="left" gutterBottom sx={{ color: '#333', fontWeight: 700, mb: 6, fontFamily: '"Poppins", sans-serif' }}>
-          Trending Career Paths
+        <Typography variant="h3" component="h2" align="center" gutterBottom sx={{ 
+          color: '#2c3e50', 
+          fontWeight: 700, 
+          mb: 6, 
+          fontFamily: '"Poppins", sans-serif',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: '-10px',
+            left: '50%',
+            width: '60px',
+            height: '4px',
+            background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+            transform: 'translateX(-50%)',
+            borderRadius: '2px',
+          }
+        }}>
+          Peak Career Destinations
         </Typography>
         <StyledSlider {...settings}>
           {careerPaths.map((path, index) => (
@@ -149,23 +221,46 @@ const TrendingPaths = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <IconWrapper sx={{ backgroundColor: path.color }}>
-                  {path.icon}
+                <IconWrapper>
+                  🎯
                 </IconWrapper>
                 <CardContent sx={{ flexGrow: 1, p: 0 }}>
-                  <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 600, fontFamily: '"Roboto", sans-serif', color: '#333' }}>
+                  <Typography gutterBottom variant="h6" component="div" sx={{ 
+                    fontWeight: 600, 
+                    fontFamily: '"Roboto", sans-serif', 
+                    color: '#2c3e50',
+                    mb: 2 
+                  }}>
                     {path.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'rgba(0, 0, 0, 0.6)', mb: 2 }}>
+                  <Typography variant="body2" sx={{ 
+                    color: '#4a5568', 
+                    mb: 3,
+                    lineHeight: 1.6,
+                    fontSize: '0.95rem'
+                  }}>
                     {path.description}
                   </Typography>
                   <Button
-                    variant="outlined"
+                    variant="contained"
                     size="small"
-                    sx={{ mt: 'auto' }}
-                    onClick={() => handleLearnMoreClick(path.path)} // Add onClick event
+                    sx={{ 
+                      mt: 'auto',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                        transform: 'translateY(-1px)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                    onClick={() => handleLearnMoreClick(path.path)}
                   >
-                    Learn More
+                    Explore Path
                   </Button>
                 </CardContent>
               </GlassCard>

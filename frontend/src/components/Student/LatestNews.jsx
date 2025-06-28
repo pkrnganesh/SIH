@@ -11,26 +11,53 @@ import image3 from '../../image/image3.jpeg';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
-  background: 'white',
+  background: 'rgba(255, 255, 255, 0.95)',
   position: 'relative',
   overflow: 'hidden',
-  marginTop: '-50px',
+  borderRadius: '24px',
+  margin: '0 -20px',
+  paddingLeft: '20px',
+  paddingRight: '20px',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpolygon fill='%23e8f2ff' opacity='0.6' points='0,0 30,15 60,5 100,20 100,0'/%3E%3C/svg%3E") repeat-x`,
+    backgroundSize: '120px 25px',
+    opacity: 0.5,
+  },
 }));
 
 const NewsCard = styled(motion.div)(({ theme }) => ({
-    background: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: theme.spacing(1),
-    padding: theme.spacing(1),
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(0, 0, 0, 0.1)',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    transition: 'all 0.3s ease-in-out',
-    '&:hover': {
-        transform: 'translateY(-5px)',
-        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-    },
+  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+  borderRadius: '20px',
+  padding: theme.spacing(2),
+  backdropFilter: 'blur(15px)',
+  border: '2px solid rgba(102, 126, 234, 0.2)',
+  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.15)',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+  position: 'relative',
+  overflow: 'hidden',
+  '&:hover': {
+    transform: 'translateY(-10px) scale(1.02)',
+    boxShadow: '0 20px 40px rgba(102, 126, 234, 0.25)',
+    border: '2px solid rgba(102, 126, 234, 0.4)',
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+    opacity: 0.7,
+  },
 }));
 
 const NewsSlider = styled(Slider)({
@@ -98,8 +125,29 @@ const LatestNews = () => {
   return (
     <StyledBox>
       <Container maxWidth="lg">
-        <Typography variant="h3" component="h2" align="left" gutterBottom sx={{ color: '#333', fontWeight: 700, mb: 6, fontFamily: '"Poppins", sans-serif' }}>
-          Latest News
+        <Typography variant="h3" component="h2" align="center" gutterBottom sx={{ 
+          color: '#2c3e50', 
+          fontWeight: 700, 
+          mb: 6, 
+          fontFamily: '"Poppins", sans-serif',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: '-10px',
+            left: '50%',
+            width: '60px',
+            height: '4px',
+            background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+            transform: 'translateX(-50%)',
+            borderRadius: '2px',
+          }
+        }}>
+          Peak News & Updates
         </Typography>
         <NewsSlider {...settings}>
           {newsArticles.map((article, index) => (

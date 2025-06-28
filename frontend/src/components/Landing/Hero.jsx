@@ -1,155 +1,352 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Box, Typography, Container, Grid, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { motion } from 'framer-motion';
-import CustomButton from './CustomButton'; // Import your custom button component
-import CustomButton2 from './CustomButton2'; // Import your custom button component
-import CustomButton3 from './CustomButton3'; // Import your custom button component
+import { motion, useInView } from 'framer-motion';
+import CustomButton from './CustomButton';
+import CustomButton2 from './CustomButton2';
+import CustomButton3 from './CustomButton3';
 
-
-const FullWidthBox = styled(Box)(({ theme }) => ({
+const HeroContainer = styled(Box)(({ theme }) => ({
   width: '100vw',
   position: 'relative',
   left: '50%',
   right: '50%',
   marginLeft: '-50vw',
   marginRight: '-50vw',
-  background: 'linear-gradient(135deg, #9DBDFF 100%,#FFD700 0%)',
+  minHeight: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  background: `
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+  `,
   overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+    opacity: 0.4,
+  },
 }));
 
 const ContentWrapper = styled(Container)(({ theme }) => ({
   position: 'relative',
-  zIndex: 1,
-  padding: theme.spacing(10, 2),
+  zIndex: 2,
+  padding: theme.spacing(15, 2),
   [theme.breakpoints.up('md')]: {
-    padding: theme.spacing(15, 4),
+    padding: theme.spacing(20, 4),
   },
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '80vh', // Center content vertically
-  textAlign: 'center',
 }));
 
-const FloatingSymbol = styled(motion.div)(({ theme }) => ({
+const FloatingElement = styled(motion.div)(({ theme }) => ({
   position: 'absolute',
-  color: 'rgba(255, 255, 255, 0.2)',
-  fontSize: '2rem',
-  fontWeight: 'bold',
+  borderRadius: '50%',
+  background: 'rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
 }));
 
-const SvgCurve = styled('div')({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  width: '100%',
-  height: '150px', // Adjust height as needed
-  overflow: 'hidden',
-  lineHeight: 0,
-  transform: 'translateY(1px)', // Adjust to smooth out transition
-  '& svg': {
-    position: 'relative',
-    display: 'block',
-    width: 'calc(100% + 1.3px)',
-    height: '100%', // Ensure the curve fills the height properly
+const GlassCard = styled(motion.div)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(20px)',
+  borderRadius: '24px',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  padding: theme.spacing(3),
+  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.1)',
+}));
+
+const PremiumChip = styled(Chip)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.2)',
+  backdropFilter: 'blur(10px)',
+  color: 'white',
+  fontWeight: 600,
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  '& .MuiChip-icon': {
+    color: '#FFD700',
   },
-  '& .shape-fill': {
-    fill: '#FFFFFF', // Curve color, you can customize this
-  },
+}));
+
+const AnimatedText = styled(motion.span)({
+  display: 'inline-block',
 });
 
-const symbols = ['+', '-', '×', '÷', '=', '∑', '∫', 'π', '√', '∞'];
+const StatsCard = styled(GlassCard)(({ theme }) => ({
+  textAlign: 'center',
+  minHeight: '120px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+}));
 
 const Hero = () => {
   const [text, setText] = useState('');
-  const fullText = "Unlock your potential with personalized career advice, detailed insights, and expert guidance tailored to your goals. Start your journey today!";
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
   
+  const words = useMemo(() => [
+    "Transform your career journey",
+    "Unlock premium opportunities", 
+    "Connect with industry experts",
+    "Accelerate your success"
+  ], []);
+  
+  const stats = [
+    { number: '10K+', label: 'Success Stories', delay: 0.2 },
+    { number: '95%', label: 'Satisfaction Rate', delay: 0.4 },
+    { number: '500+', label: 'Expert Mentors', delay: 0.6 },
+  ];
+
+  const floatingElements = [
+    { size: 80, top: '20%', left: '10%', delay: 0 },
+    { size: 120, top: '60%', right: '15%', delay: 0.5 },
+    { size: 60, bottom: '25%', left: '20%', delay: 1 },
+    { size: 100, top: '15%', right: '30%', delay: 1.5 },
+  ];
+
   useEffect(() => {
-    let index = 0;
-    const typingInterval = setInterval(() => {
-      if (index < fullText.length) {
-        setText((prev) => prev + fullText.charAt(index)); // Use charAt to avoid undefined
-        index++;
-      } else {
-        clearInterval(typingInterval);
+    const typeText = async () => {
+      const currentWord = words[currentWordIndex];
+      
+      // Type out current word
+      for (let i = 0; i <= currentWord.length; i++) {
+        setText(currentWord.slice(0, i));
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
-    }, 50);
-  
-    return () => clearInterval(typingInterval);
-  }, []);
-  
+      
+      // Pause
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Delete current word
+      for (let i = currentWord.length; i >= 0; i--) {
+        setText(currentWord.slice(0, i));
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
+      // Move to next word
+      setCurrentWordIndex((prev) => (prev + 1) % words.length);
+    };
+
+    typeText();
+  }, [currentWordIndex, words]);
+
   return (
-    <FullWidthBox>
-      <ContentWrapper maxWidth="xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.div
-            initial={{ perspective: 800, rotateX: 90 }}
-            animate={{ perspective: 800, rotateX: 0 }}
-            transition={{ duration: 1.5 }}
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            <Typography variant="h1" component="h1" sx={{ color: 'white', fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' }, lineHeight: 1.2, fontFamily: 'Playfair Display' }}>
-              Career Guidance
-            </Typography>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            <Typography variant="body1" sx={{ color: 'black', mb: 3, fontSize: '1.2rem', maxWidth: '80%' ,fontFamily:'monospace', margin: '0 auto' }}>
-              {text}
-            </Typography>
-            <Box display="flex" justifyContent="center" gap={2} mt={4}>
-              <CustomButton />
-              <CustomButton2 />
-              <CustomButton3 />
-            </Box>
-          </motion.div>
-        </motion.div>
-      </ContentWrapper>
-      {symbols.map((symbol, index) => (
-        <FloatingSymbol
+    <HeroContainer ref={ref}>
+      {/* Floating Elements */}
+      {floatingElements.map((element, index) => (
+        <FloatingElement
           key={index}
-          initial={{ opacity: 0, scale: 0 }}
+          style={{
+            width: element.size,
+            height: element.size,
+            top: element.top,
+            left: element.left,
+            right: element.right,
+            bottom: element.bottom,
+          }}
           animate={{
-            opacity: [0.2, 0.5, 0.2],
-            scale: [1, 1.2, 1],
-            x: [0, 10, 0],
-            y: [0, 15, 0],
+            y: [-20, 20, -20],
+            rotate: [0, 180, 360],
+            scale: [1, 1.1, 1],
           }}
           transition={{
-            duration: 3 + index,
+            duration: 6 + index,
             repeat: Infinity,
-            repeatType: "reverse",
+            ease: "easeInOut",
+            delay: element.delay,
           }}
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-          }}
-        >
-          {symbol}
-        </FloatingSymbol>
+        />
       ))}
-      <SvgCurve>
+
+      <ContentWrapper maxWidth="xl">
+        <Grid container spacing={6} alignItems="center">
+          <Grid item xs={12} md={7}>
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8 }}
+            >
+              <PremiumChip 
+                label="✨ Premium Career Platform" 
+                sx={{ mb: 3 }}
+              />
+              
+              <Typography 
+                variant="h1" 
+                component="h1" 
+                sx={{ 
+                  color: 'white',
+                  mb: 3,
+                  fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem' },
+                  fontWeight: 700,
+                  lineHeight: 1.1,
+                }}
+              >
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                  Elevate Your Career
+                </motion.span>
+                <br />
+                <AnimatedText
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  style={{
+                    background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {text}
+                  <motion.span
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 1, repeat: Infinity }}
+                  >
+                    |
+                  </motion.span>
+                </AnimatedText>
+              </Typography>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <Typography 
+                  variant="h5" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    mb: 4,
+                    fontWeight: 400,
+                    lineHeight: 1.6,
+                    maxWidth: '600px'
+                  }}
+                >
+                  Access premium career guidance, connect with industry leaders, and unlock 
+                  opportunities that transform your professional journey with our AI-powered platform.
+                </Typography>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <Box display="flex" flexWrap="wrap" gap={2} mb={4}>
+                  <CustomButton />
+                  <CustomButton2 />
+                  <CustomButton3 />
+                </Box>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.8 }}
+              >
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  🔒 Trusted by 10,000+ professionals worldwide
+                </Typography>
+              </motion.div>
+            </motion.div>
+          </Grid>
+
+          <Grid item xs={12} md={5}>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <Grid container spacing={3}>
+                {stats.map((stat, index) => (
+                  <Grid item xs={12} key={index}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.6, delay: stat.delay }}
+                    >
+                      <StatsCard
+                        whileHover={{ 
+                          scale: 1.05,
+                          y: -5,
+                          boxShadow: '0 35px 60px rgba(0, 0, 0, 0.15)'
+                        }}
+                      >
+                        <Typography 
+                          variant="h3" 
+                          sx={{ 
+                            color: 'white',
+                            fontWeight: 700,
+                            mb: 1
+                          }}
+                        >
+                          {stat.number}
+                        </Typography>
+                        <Typography 
+                          variant="body1" 
+                          sx={{ 
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontWeight: 500
+                          }}
+                        >
+                          {stat.label}
+                        </Typography>
+                      </StatsCard>
+                    </motion.div>
+                  </Grid>
+                ))}
+              </Grid>
+            </motion.div>
+          </Grid>
+        </Grid>
+      </ContentWrapper>
+
+      {/* Bottom Wave */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          overflow: 'hidden',
+          lineHeight: 0,
+        }}
+      >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1200 120"
           preserveAspectRatio="none"
+          style={{
+            position: 'relative',
+            display: 'block',
+            width: 'calc(100% + 1.3px)',
+            height: '80px',
+          }}
         >
-          <path
-            d="M0,0 C150,50 350,0 600,50 C850,100 1050,50 1200,0 L1200,120 L0,120 Z"
-            className="shape-fill"
+          <motion.path
+            d="M0,0 C300,100 900,20 1200,60 L1200,120 L0,120 Z"
+            fill="white"
+            initial={{ pathLength: 0 }}
+            animate={isInView ? { pathLength: 1 } : {}}
+            transition={{ duration: 2, ease: "easeInOut" }}
           />
         </svg>
-      </SvgCurve>
-    </FullWidthBox>
+      </Box>
+    </HeroContainer>
   );
 };
 

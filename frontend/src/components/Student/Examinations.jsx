@@ -8,33 +8,76 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
-  background: 'white',
+  background: 'rgba(255, 255, 255, 0.95)',
   position: 'relative',
   overflow: 'hidden',
+  borderRadius: '24px',
+  margin: '0 -20px',
+  paddingLeft: '20px',
+  paddingRight: '20px',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpolygon fill='%23f0f4ff' opacity='0.7' points='0,20 25,5 50,15 75,0 100,10 100,20'/%3E%3C/svg%3E") repeat-x`,
+    backgroundSize: '150px 30px',
+    opacity: 0.4,
+  },
 }));
 
 const GlassCard = styled(motion.div)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 1)',
-  borderRadius: theme.spacing(2),
+  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%)',
+  borderRadius: '20px',
   padding: theme.spacing(3),
-  border: '1px solid rgba(0, 0, 0, 0.1)',
-  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+  backdropFilter: 'blur(15px)',
+  border: '2px solid rgba(102, 126, 234, 0.2)',
+  boxShadow: '0 8px 32px rgba(102, 126, 234, 0.15)',
   display: 'flex',
   flexDirection: 'column',
-  height: '360px',
-  transition: 'all 0.3s ease-in-out',
+  height: '400px',
+  transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+  position: 'relative',
+  overflow: 'hidden',
   '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 6px 25px rgba(0, 0, 0, 0.15)',
+    transform: 'translateY(-10px) scale(1.02)',
+    boxShadow: '0 20px 40px rgba(102, 126, 234, 0.25)',
+    border: '2px solid rgba(102, 126, 234, 0.4)',
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '4px',
+    background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
+    opacity: 0.7,
   },
 }));
 
 const ImageWrapper = styled(Box)({
   width: '100%',
-  height: '160px',
-  borderRadius: '8px',
+  height: '180px',
+  borderRadius: '16px',
   overflow: 'hidden',
-  marginBottom: '16px',
+  marginBottom: '20px',
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+    transition: 'opacity 0.3s ease',
+  },
+  '&:hover::after': {
+    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)',
+  },
 });
 
 const StyledImage = styled('img')({

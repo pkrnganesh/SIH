@@ -5,134 +5,452 @@ import {
   Grid,
   Link,
   Button,
-  Paper,
+  Box,
+  IconButton,
+  Divider,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import SendIcon from '@mui/icons-material/Send';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import SecurityIcon from '@mui/icons-material/Security';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
-// SVG Icons
-const HeartIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF3366"/>
-  </svg>
-);
-
-const TwitterIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22.46 6.003a8.53 8.53 0 0 1-2.357.645 4.157 4.157 0 0 0 1.81-2.293 8.288 8.288 0 0 1-2.605.993 4.141 4.141 0 0 0-7.05 3.779c0 .32.036.633.106.933A11.72 11.72 0 0 1 2.5 5.158a4.125 4.125 0 0 0 1.283 5.52A4.089 4.089 0 0 1 2 10.68v.048a4.14 4.14 0 0 0 3.317 4.058 4.166 4.166 0 0 1-1.854.07 4.138 4.138 0 0 0 3.868 2.873 8.29 8.29 0 0 1-5.138 1.775A8.429 8.429 0 0 1 0 18.216a11.682 11.682 0 0 0 6.29 1.839c7.55 0 11.688-6.257 11.688-11.688 0-.18-.005-.359-.012-.537A8.303 8.303 0 0 0 22.46 6.003z" fill="#1DA1F2"/>
-  </svg>
-);
-
-const GitHubIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2C6.48 2 2 6.48 2 12c0 4.418 2.867 8.16 6.84 9.48.5.09.68-.217.68-.48v-1.743c-2.76.598-3.34-1.33-3.34-1.33-.45-1.144-1.096-1.452-1.096-1.452-.896-.613.068-.601.068-.601 1.002.07 1.528 1.035 1.528 1.035.888 1.52 2.332 1.079 2.898.828.094-.643.349-1.079.635-1.327-2.22-.254-4.56-1.11-4.56-4.944 0-1.092.392-1.989 1.036-2.693-.103-.254-.45-1.272.099-2.652 0 0 .837-.268 2.74 1.022.795-.222 1.653-.333 2.508-.337.855.004 1.713.115 2.508.337 1.906-1.29 2.74-1.022 2.74-1.022.548 1.38.205 2.398.103 2.652.644.704 1.036 1.601 1.036 2.693 0 3.836-2.34 4.692-4.56 4.944.358.306.68.888.68 1.786v2.645c0 .264.181.574.68.48C21.133 20.16 24 16.418 24 12c0-5.52-4.48-10-10-10z" fill="#333"/>
-  </svg>
-);
-
-const LinkedInIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4.98 3.5C4.98 4.88 6.03 6 7.5 6S10.02 4.88 10.02 3.5 8.97 1 7.5 1 4.98 2.12 4.98 3.5zM7.5 0C5.01 0 3 2.01 3 4.5S5.01 9 7.5 9 12 6.99 12 4.5 9.99 0 7.5 0zM16.5 9h-2.5V7c0-.55-.45-1-1-1s-1 .45-1 1v2H9.5c-.55 0-1 .45-1 1s.45 1 1 1h2.5v6.5c0 .55.45 1 1 1s1-.45 1-1V11h2.5c.55 0 1-.45 1-1s-.45-1-1-1zM4 9.5H1.5c-.55 0-1 .45-1 1s.45 1 1 1H4c.55 0 1-.45 1-1s-.45-1-1-1zM2.5 8h1V9.5h-1V8zM4 7.5c-.55 0-1 .45-1 1v2H1.5c-.55 0-1 .45-1 1s.45 1 1 1H3v1.5c0 .55.45 1 1 1s1-.45 1-1V11h1.5c.55 0 1-.45 1-1s-.45-1-1-1H4V8c0-.55-.45-1-1-1zM16.5 9h-2.5V7c0-.55-.45-1-1-1s-1 .45-1 1v2H9.5c-.55 0-1 .45-1 1s.45 1 1 1h2.5v6.5c0 .55.45 1 1 1s1-.45 1-1V11h2.5c.55 0 1-.45 1-1s-.45-1-1-1z" fill="#0077B5"/>
-  </svg>
-);
-
-
-const FooterPaper = styled(Paper)(({ theme }) => ({
-  background: "#F5F7F8",
-  transform: "translateY(-20px)",
-  padding: 0, // Remove padding
-  margin: 0, // Remove margin
-  borderTop: "1px solid rgba(0, 0, 0, 0.1)",
-  position: "relative",
-  zIndex: 1,
-  width: "100%",
-  left: "0",
-  right: "0",
-  marginLeft: "auto",
-  marginRight: "auto",
+const FooterContainer = styled(Box)(({ theme }) => ({
+  background: `
+    linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)
+  `,
+  color: 'white',
+  position: 'relative',
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+    opacity: 0.1,
+  },
 }));
 
-const DonateButton = styled(Button)(({ theme }) => ({
-  backgroundColor: "#1E2330",
-  color: "#ffffff",
-  borderRadius: "8px",
-  padding: "10px 20px",
-  display: "flex",
-  alignItems: "center",
-  "&:hover": {
-    backgroundColor: "#2C3340",
+const LogoSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: theme.spacing(3),
+}));
+
+const Logo = styled(Typography)(({ theme }) => ({
+  fontFamily: '"Playfair Display", serif',
+  fontWeight: 700,
+  fontSize: '2.5rem',
+  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+  marginRight: theme.spacing(1),
+}));
+
+const VerifiedBadge = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.5),
+  background: 'rgba(255, 215, 0, 0.1)',
+  padding: theme.spacing(0.5, 1.5),
+  borderRadius: '20px',
+  border: '1px solid rgba(255, 215, 0, 0.3)',
+}));
+
+const NewsletterBox = styled(Box)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.05)',
+  backdropFilter: 'blur(20px)',
+  borderRadius: '20px',
+  padding: theme.spacing(4),
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  textAlign: 'center',
+}));
+
+const PremiumTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '25px',
+    color: 'white',
+    '& fieldset': {
+      borderColor: 'rgba(255, 255, 255, 0.3)',
+    },
+    '&:hover fieldset': {
+      borderColor: 'rgba(255, 215, 0, 0.5)',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#FFD700',
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  '& .MuiInputBase-input': {
+    color: 'white',
+  },
+}));
+
+const SocialButton = styled(IconButton)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(10px)',
+  color: 'white',
+  margin: theme.spacing(0.5),
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    background: 'rgba(255, 215, 0, 0.2)',
+    borderColor: '#FFD700',
+    transform: 'translateY(-2px)',
   },
 }));
 
 const FooterLink = styled(Link)(({ theme }) => ({
-  color: "#6B7280",
-  textDecoration: "none",
-  display: "block",
+  color: 'rgba(255, 255, 255, 0.7)',
+  textDecoration: 'none',
+  fontSize: '0.95rem',
+  transition: 'all 0.3s ease',
+  display: 'block',
   marginBottom: theme.spacing(1),
-  "&:hover": {
-    color: "#374151",
+  '&:hover': {
+    color: '#FFD700',
+    transform: 'translateX(5px)',
   },
 }));
 
-const FooterHeading = styled(Typography)(({ theme }) => ({
-  color: "#FF3366",
-  fontWeight: "bold",
+const ContactItem = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
   marginBottom: theme.spacing(2),
+  color: 'rgba(255, 255, 255, 0.8)',
+  '& .MuiSvgIcon-root': {
+    marginRight: theme.spacing(1.5),
+    color: '#FFD700',
+  },
 }));
 
-const SocialIcon = styled("img")(({ theme }) => ({
-  width: "24px",
-  height: "24px",
-  marginRight: theme.spacing(1),
+const TrustBadge = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing(1),
+  background: 'rgba(255, 255, 255, 0.05)',
+  padding: theme.spacing(1, 2),
+  borderRadius: '25px',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  marginTop: theme.spacing(2),
 }));
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const footerSections = [
+    {
+      title: "Platform",
+      links: [
+        { label: "Career Guidance", href: "/guidance" },
+        { label: "AI Analysis", href: "/ai-analysis" },
+        { label: "Mentorship", href: "/mentorship" },
+        { label: "Course Recommendations", href: "/courses" },
+        { label: "Student Dashboard", href: "/student-dashboard" },
+      ]
+    },
+    {
+      title: "Company",
+      links: [
+        { label: "About Us", href: "/about" },
+        { label: "Our Mission", href: "/mission" },
+        { label: "Careers", href: "/careers" },
+        { label: "Press", href: "/press" },
+        { label: "Blog", href: "/blog" },
+      ]
+    },
+    {
+      title: "Support",
+      links: [
+        { label: "Help Center", href: "/help" },
+        { label: "Documentation", href: "/docs" },
+        { label: "API Reference", href: "/api" },
+        { label: "Community", href: "/community" },
+        { label: "Contact Support", href: "/support" },
+      ]
+    },
+    {
+      title: "Legal",
+      links: [
+        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms of Service", href: "/terms" },
+        { label: "Cookie Policy", href: "/cookies" },
+        { label: "GDPR Compliance", href: "/gdpr" },
+        { label: "Refund Policy", href: "/refunds" },
+      ]
+    }
+  ];
+
   return (
-    <FooterPaper elevation={0}>
-      <Container maxWidth="lg">
-        <Grid container spacing={4} textAlign="center">
-          <Grid item xs={12} sm={6} md={3}>
-            <FooterHeading variant="subtitle1">Resources</FooterHeading>
-            <FooterLink href="#" variant="body2">
-              Attendance Tips
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              How to Use the Dashboard
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              Student Engagement Strategies
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              FAQs
-            </FooterLink>
+    <FooterContainer>
+      <Container maxWidth="xl" sx={{ py: 8 }}>
+        <Grid container spacing={6}>
+          {/* Company Info */}
+          <Grid item xs={12} md={4}>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <LogoSection>
+                <Logo>DreamTrax</Logo>
+                <VerifiedBadge>
+                  <VerifiedIcon sx={{ fontSize: '1rem', color: '#FFD700' }} />
+                  <Typography variant="caption" sx={{ color: '#FFD700', fontWeight: 600 }}>
+                    Verified
+                  </Typography>
+                </VerifiedBadge>
+              </LogoSection>
+              
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  mb: 3,
+                  lineHeight: 1.7,
+                  fontSize: '1.1rem'
+                }}
+              >
+                Transform your career with AI-powered insights, expert mentorship, 
+                and personalized guidance from industry leaders.
+              </Typography>
+
+              <ContactItem>
+                <LocationOnIcon />
+                <Typography variant="body2">
+                  Silicon Valley, CA 94301, USA
+                </Typography>
+              </ContactItem>
+
+              <ContactItem>
+                <EmailIcon />
+                <Typography variant="body2">
+                  hello@dreamtrax.com
+                </Typography>
+              </ContactItem>
+
+              <ContactItem>
+                <PhoneIcon />
+                <Typography variant="body2">
+                  +1 (555) 123-4567
+                </Typography>
+              </ContactItem>
+
+              <TrustBadge>
+                <SecurityIcon sx={{ fontSize: '1rem' }} />
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                  Enterprise-grade Security
+                </Typography>
+              </TrustBadge>
+            </motion.div>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <FooterHeading variant="subtitle1">Company</FooterHeading>
-            <FooterLink href="#" variant="body2">
-              About Us
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              Careers
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              Blog
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              Contact
-            </FooterLink>
-            <FooterLink href="#" variant="body2">
-              Privacy Policy
-            </FooterLink>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <FooterHeading variant="subtitle1">Follow Us</FooterHeading>  
-            <SocialIcon as={TwitterIcon} />
-            <SocialIcon as={GitHubIcon} />
-            <socialIcon as={LinkedInIcon} />
+
+          {/* Footer Links */}
+          {footerSections.map((section, index) => (
+            <Grid item xs={6} md={2} key={section.title}>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
+                viewport={{ once: true }}
+              >
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 3,
+                    fontSize: '1.1rem'
+                  }}
+                >
+                  {section.title}
+                </Typography>
+                {section.links.map((link) => (
+                  <FooterLink key={link.label} href={link.href}>
+                    {link.label}
+                  </FooterLink>
+                ))}
+              </motion.div>
+            </Grid>
+          ))}
+
+          {/* Newsletter */}
+          <Grid item xs={12} md={4}>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <NewsletterBox>
+                <Typography 
+                  variant="h5" 
+                  sx={{ 
+                    color: 'white',
+                    fontWeight: 600,
+                    mb: 2
+                  }}
+                >
+                  Stay Updated
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    mb: 3,
+                    lineHeight: 1.6
+                  }}
+                >
+                  Get the latest career insights, industry trends, and exclusive offers 
+                  delivered to your inbox.
+                </Typography>
+                
+                <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+                  <PremiumTextField
+                    fullWidth
+                    placeholder="Enter your email"
+                    size="small"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            sx={{ 
+                              color: '#FFD700',
+                              '&:hover': {
+                                background: 'rgba(255, 215, 0, 0.1)'
+                              }
+                            }}
+                          >
+                            <SendIcon />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    display: 'block',
+                    mb: 3
+                  }}
+                >
+                  Join 50,000+ professionals who trust DreamTrax
+                </Typography>
+
+                <Box sx={{ textAlign: 'center' }}>
+                  <SocialButton component={motion.div} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <TwitterIcon />
+                  </SocialButton>
+                  <SocialButton component={motion.div} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <LinkedInIcon />
+                  </SocialButton>
+                  <SocialButton component={motion.div} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <GitHubIcon />
+                  </SocialButton>
+                  <SocialButton component={motion.div} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <InstagramIcon />
+                  </SocialButton>
+                </Box>
+              </NewsletterBox>
+            </motion.div>
           </Grid>
         </Grid>
+
+        <Divider sx={{ my: 6, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+        {/* Bottom Bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+          viewport={{ once: true }}
+        >
+          <Grid container spacing={3} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  textAlign: { xs: 'center', md: 'left' }
+                }}
+              >
+                © {currentYear} DreamTrax. All rights reserved. Built with ❤️ in Silicon Valley.
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Box 
+                sx={{ 
+                  display: 'flex',
+                  gap: 2,
+                  justifyContent: { xs: 'center', md: 'flex-end' },
+                  flexWrap: 'wrap'
+                }}
+              >
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
+                >
+                  <SecurityIcon sx={{ fontSize: '0.8rem' }} />
+                  SOC 2 Compliant
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
+                >
+                  <VerifiedIcon sx={{ fontSize: '0.8rem' }} />
+                  GDPR Ready
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
+                >
+                  <SecurityIcon sx={{ fontSize: '0.8rem' }} />
+                  ISO 27001
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </motion.div>
       </Container>
-    </FooterPaper>
+    </FooterContainer>
   );
-}
+};
 
 export default Footer;
 
