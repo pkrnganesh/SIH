@@ -8,6 +8,7 @@ const AuthRoutes = require('./routes/authRoutes');
 const intermediateCarrierPathRoutes = require('./routes/intermediateCarrierPathRoutes');
 const collegeRoutes = require('./routes/IntermediateCollegeRoutes'); // Adjust this path to match your routes
 const Intermediateexams=require('./routes/IntermediateExamRoutes');
+const NotificationController = require('./routes/NotiRoutes');
 
 const Mentorroutes = require('./routes/MentorRoutes');
 dotenv.config();
@@ -28,6 +29,7 @@ app.use('/mentors', Mentorroutes);
 app.use('/intermediate', intermediateCarrierPathRoutes);
 app.use('/intermediatecolleges', collegeRoutes); // Prefix routes related to colleges
 app.use('/intermediateexams',Intermediateexams);
+app.use('/notifications', NotificationController); // Prefix routes related to notifications
 // Connect to MongoDB
 
 mongoose.connect(process.env.MONGODB_URI, {
