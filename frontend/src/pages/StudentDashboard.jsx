@@ -102,34 +102,36 @@ function StudentDashboard() {
                 </Box>
               }>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <ModernHero onResultsShow={setShowResults} />
+                <Box sx={{ marginTop: '80px' }}>
+                  <ModernHero onResultsShow={setShowResults} />
                 
-                <AnimatePresence>
-                  {showResults && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -50 }}
-                      transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                      <GlassSectionDivider />
-                      <ModernTrendingPaths />
-                      <GlassSectionDivider />
-                      <ModernExaminations />
-                      <GlassSectionDivider />
-                      <ModernLatestNews />
-                      <GlassSectionDivider />
-                      <ModernAdvisoryNotes />
-                      <GlassSectionDivider />
-                      {currentUser && (
-                        <UserBookings 
-                          userEmail={currentUser.email} 
-                          userType="student" 
-                        />
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  <AnimatePresence>
+                    {showResults && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                      >
+                        <GlassSectionDivider />
+                        <ModernTrendingPaths />
+                        <GlassSectionDivider />
+                        <ModernExaminations />
+                        <GlassSectionDivider />
+                        <ModernLatestNews />
+                        <GlassSectionDivider />
+                        <ModernAdvisoryNotes />
+                        <GlassSectionDivider />
+                        {currentUser && (
+                          <UserBookings 
+                            userEmail={currentUser.email} 
+                            userType="student" 
+                          />
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Box>
               </Suspense>
             </ContentWrapper>
           </motion.div>

@@ -15,7 +15,6 @@ import {
   EventAvailable as EventAvailableIcon
 } from '@mui/icons-material';
 
-import { lightTheme } from '../components/Landing/theme';
 import UserBookings from '../components/MeetingScheduler/UserBookings';
 import MentorSessionManager from '../utils/mentorSessionManager';
 

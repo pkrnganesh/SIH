@@ -263,7 +263,7 @@ const CareerGuidanceAssessment = () => {
       <CssBaseline />
       <Header/>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', p: 3, bgcolor: 'background.default' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', p: 3, bgcolor: 'background.default', marginTop: '80px' }}>
         {!showResults ? (
          <>
          <Typography variant="h4" gutterBottom align="center" sx={{ mb: 2, color: 'primary.main' }}>
