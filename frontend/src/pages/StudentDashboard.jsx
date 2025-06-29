@@ -103,7 +103,8 @@ function StudentDashboard() {
                 </Box>
               }>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <ModernHero onResultsShow={setShowResults} />
+                <Box sx={{ marginTop: '80px' }}>
+                  <ModernHero onResultsShow={setShowResults} />
                 
                 <AnimatePresence>
                   {showResults && (
@@ -133,6 +134,8 @@ function StudentDashboard() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+                </Box>
+                <GlassSectionDivider />
               </Suspense>
             </ContentWrapper>
           </motion.div>

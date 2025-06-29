@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, Container } from '@mui/material';
+import { CssBaseline, Container, Box } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -33,10 +33,12 @@ function IntermediateCourse() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-                <StreamsSection />
-                <ModernCollegeExplorer />
-                <ExamDashboard />
-                <SessionStats />
+                <Box sx={{ marginTop: '80px' }}>
+                  <StreamsSection />
+                  <ModernCollegeExplorer />
+                  <ExamDashboard />
+                  <SessionStats />
+                </Box>
                  <Footer />
               </Suspense>
             </Container>

@@ -36,7 +36,7 @@ app.use('/api/resume', ResumeRoutes);  // Resume routes
 app.use('/intermediate', intermediateCarrierPathRoutes);
 app.use('/intermediatecolleges', collegeRoutes); // Prefix routes related to colleges
 app.use('/intermediateexams',Intermediateexams);
-app.use('/notifications', NotificationController); // Prefix routes related to notifications
+app.use('/notifications', NotificationRoutes); // Prefix routes related to notifications
 app.use('/booking', BookingRoutes); // Prefix routes related to booking sessions
 app.use('/interview', InterviewRoutes); // Interview preparation routes
 // Connect to MongoDB
