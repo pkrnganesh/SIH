@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'yourgmail@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'your-gmail-app-password'
+    pass: process.env.EMAIL_PASS || 'your-gmail-app-password'
   }
 });
 
@@ -159,7 +159,8 @@ const bookSession = async (req, res) => {
         `Career Guidance Session: ${studentName} with ${mentorName}`,
         sessionTopic || 'General Career Guidance',
         startTime,
-        endTime
+        endTime ,
+        [studentEmail, mentorEmail] // ✅ pass a simple array
       );
       meetLink = calendarEvent.hangoutLink;
     } catch (err) {
@@ -277,10 +278,16 @@ Good luck with your session! 🚀`;
     }
 
     // Send WhatsApp and SMS to mentor
-    if (mentorPhone) {
-      mentorNotifications.whatsapp = await sendWhatsAppNotification(mentorPhone, whatsappMessage);
-      mentorNotifications.sms = await sendSMSNotification(mentorPhone, smsMessage);
-    }
+let mentorPhone = null;
+try {
+  const mentor = await Mentor.findOne({ mentor_email: mentorEmail });
+  if (mentor) {
+    mentorPhone = mentor.mentor_phonenumber;
+  }
+} catch (error) {
+  console.log('Could not fetch mentor details:', error.message);
+}
+
 
     // Prepare response
     const response = {
@@ -306,7 +313,7 @@ Good luck with your session! 🚀`;
       }
     };
 
-    res.json(response);
+    // res.json(response);
 
   } catch (error) {
     console.error('Booking error:', error);
