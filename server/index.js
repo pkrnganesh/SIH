@@ -11,6 +11,8 @@ const collegeRoutes = require('./routes/IntermediateCollegeRoutes'); // Adjust t
 const Intermediateexams=require('./routes/IntermediateExamRoutes');
 const BookingRoutes = require('./routes/BookingRoutes');
 const NotificationController = require('./routes/NotiRoutes');
+const ResumeRoutes = require('./routes/ResumeRoutes');
+const InterviewRoutes = require('./routes/InterviewRoutes');
 
 const Mentorroutes = require('./routes/MentorRoutes');
 dotenv.config();
@@ -30,11 +32,13 @@ app.use('/auth', AuthRoutes);  // Student auth routes
 app.use('/mentor-auth', MentorAuthRoutes);  // Mentor auth routes
 app.use('/mentors', Mentorroutes);
 app.use('/api', BookingRoutes);  // Booking routes
+app.use('/api/resume', ResumeRoutes);  // Resume routes
 app.use('/intermediate', intermediateCarrierPathRoutes);
 app.use('/intermediatecolleges', collegeRoutes); // Prefix routes related to colleges
 app.use('/intermediateexams',Intermediateexams);
 app.use('/notifications', NotificationController); // Prefix routes related to notifications
 app.use('/booking', BookingRoutes); // Prefix routes related to booking sessions
+app.use('/interview', InterviewRoutes); // Interview preparation routes
 // Connect to MongoDB
 
 mongoose.connect(process.env.MONGODB_URI, {

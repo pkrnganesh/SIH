@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, Container } from '@mui/material';
+import { CssBaseline, Container, Box, Typography } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -31,18 +31,36 @@ function GuidancePage() {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
+            style={{ 
+              minHeight: '100vh',
+              backgroundColor: '#ffffff'
+            }}
           >
-            <Container maxWidth="xl">
-              <Suspense fallback={<div>Loading...</div>}>
+            <Box sx={{ maxWidth: '100%', overflow: 'hidden' }}>
+              <Suspense fallback={
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center', 
+                  height: '100vh',
+                  backgroundColor: '#ffffff'
+                }}>
+                  <Typography variant="h6" color="primary">
+                    Loading premium experience...
+                  </Typography>
+                </Box>
+              }>
                 <Header />
                 <GuidanceHero onSearch={handleSearch} />
-                <MentorList searchTerm={searchTerm} />
-                <SessionStats />
-                <FAQ />
-                <CompanyLogos />
+                <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 4 } }}>
+                  <MentorList searchTerm={searchTerm} />
+                  <SessionStats />
+                  <CompanyLogos />
+                  <FAQ />
+                </Container>
                 <Footer />
               </Suspense>
-            </Container>
+            </Box>
           </motion.div>
         </AnimatePresence>
       </ParallaxProvider>

@@ -94,6 +94,23 @@ const NavButton = styled(motion(Button))(({ theme }) => ({
   },
 }));
 
+const DemoButton = styled(motion(Button))(({ theme }) => ({
+  background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
+  color: 'white',
+  fontWeight: 600,
+  padding: theme.spacing(1, 2.5),
+  borderRadius: '20px',
+  textTransform: 'none',
+  boxShadow: '0 4px 15px rgba(255, 107, 107, 0.3)',
+  border: 'none',
+  fontSize: '0.9rem',
+  '&:hover': {
+    transform: 'translateY(-1px)',
+    boxShadow: '0 6px 20px rgba(255, 107, 107, 0.4)',
+    background: 'linear-gradient(135deg, #FF5252 0%, #FF7043 100%)',
+  },
+}));
+
 const PremiumButton = styled(motion(Button))(({ theme }) => ({
   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   color: 'white',
@@ -129,6 +146,36 @@ const PremiumButton = styled(motion(Button))(({ theme }) => ({
   },
 }));
 
+const AnnouncementBar = styled(Box)(({ theme }) => ({
+  backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  color: 'white',
+  padding: theme.spacing(1, 2),
+  textAlign: 'center',
+  fontSize: '0.875rem',
+  fontWeight: 500,
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1300,
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
+    animation: 'slide 3s infinite',
+  },
+  '@keyframes slide': {
+    '0%': { left: '-100%' },
+    '100%': { left: '100%' },
+  },
+}));
+
 const MobileDrawer = styled(Drawer)(({ theme }) => ({
   '& .MuiDrawer-paper': {
     width: 280,
@@ -146,28 +193,34 @@ const Header = ({ darkMode, toggleDarkMode }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesAnchor, setServicesAnchor] = useState(null);
   const [mentorAnchor, setMentorAnchor] = useState(null);
+  const [resourcesAnchor, setResourcesAnchor] = useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const navigationItems = [
-    { label: 'Home', href: '#home' },
-    { label: 'Features', href: '#features' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
-  ];
+
 
   const serviceItems = [
-    { label: 'Career Guidance', href: '/guidance' },
-    { label: 'Mentorship', href: '/mentorship' },
-    { label: 'AI Analysis', href: '/ai-analysis' },
+    { label: 'Career Guidance AI', href: '/guidance' },
+    { label: 'One-on-One Mentorship', href: '/guidance' },
+    { label: 'Skill Assessment', href: '/career-guidance-ai' },
     { label: 'Course Recommendations', href: '/courses' },
+    { label: 'Interview Preparation', href: '/interview-prep' },
+    { label: 'Resume Builder', href: '/resume-builder' },
   ];
 
   const mentorItems = [
     { label: 'Mentor Login', href: '/mentor-login' },
     { label: 'Join as Mentor', href: '/mentor-signup' },
     { label: 'Mentor Dashboard', href: '/mentor-dashboard' },
+  ];
+
+  const resourceItems = [
+    { label: 'Career Blog', href: '/blog' },
+    { label: 'Industry Reports', href: '/reports' },
+    { label: 'Salary Guide', href: '/salary-guide' },
+    { label: 'Study Materials', href: '/study-materials' },
+    { label: 'Success Stories', href: '/success-stories' },
   ];
 
   useEffect(() => {
@@ -216,6 +269,14 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     setMentorAnchor(null);
   };
 
+  const handleResourcesClick = (event) => {
+    setResourcesAnchor(event.currentTarget);
+  };
+
+  const handleResourcesClose = () => {
+    setResourcesAnchor(null);
+  };
+
   const handleUserMenuClick = (event) => {
     setUserMenuAnchor(event.currentTarget);
   };
@@ -245,24 +306,36 @@ const Header = ({ darkMode, toggleDarkMode }) => {
     navigate('/student-dashboard');
   };
 
+  const handleBookDemo = () => {
+    // Navigate to student dashboard with booking focus, or student signup if not logged in
+    if (isAuthenticated) {
+      navigate('/student-dashboard', { state: { focusBooking: true } });
+    } else {
+      navigate('/student-signup', { state: { redirectTo: 'booking' } });
+    }
+  };
+
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Logo>DreamTrax</Logo>
-        <IconButton onClick={handleDrawerToggle}>
+ <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 'bold',
+              background: 'linear-gradient(45deg, #4f46e5, #06b6d4)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            DreamTrax
+          </Typography>        <IconButton onClick={handleDrawerToggle}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
       <List sx={{ flexGrow: 1, px: 2 }}>
-        {navigationItems.map((item) => (
-          <ListItem key={item.label} sx={{ borderRadius: 2, mb: 1 }}>
-            <ListItemText 
-              primary={item.label} 
-              primaryTypographyProps={{ fontWeight: 500 }}
-            />
-          </ListItem>
-        ))}
+        
         <ListItem sx={{ borderRadius: 2, mb: 1 }}>
           <ListItemText 
             primary="Services" 
@@ -270,6 +343,27 @@ const Header = ({ darkMode, toggleDarkMode }) => {
           />
         </ListItem>
         {serviceItems.map((item) => (
+          <ListItem 
+            key={item.label} 
+            sx={{ borderRadius: 2, mb: 1, pl: 4, cursor: 'pointer' }}
+            onClick={() => {
+              handleDrawerToggle();
+              navigate(item.href);
+            }}
+          >
+            <ListItemText 
+              primary={item.label} 
+              primaryTypographyProps={{ fontSize: '0.9rem', color: 'text.secondary' }}
+            />
+          </ListItem>
+        ))}
+        <ListItem sx={{ borderRadius: 2, mb: 1 }}>
+          <ListItemText 
+            primary="Resources" 
+            primaryTypographyProps={{ fontWeight: 500 }}
+          />
+        </ListItem>
+        {resourceItems.map((item) => (
           <ListItem key={item.label} sx={{ borderRadius: 2, mb: 1, pl: 4 }}>
             <ListItemText 
               primary={item.label} 
@@ -278,7 +372,16 @@ const Header = ({ darkMode, toggleDarkMode }) => {
           </ListItem>
         ))}
       </List>
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DemoButton 
+          fullWidth 
+          onClick={() => {
+            handleDrawerToggle();
+            handleBookDemo();
+          }}
+        >
+          📅 Book Demo
+        </DemoButton>
         <PremiumButton fullWidth onClick={handleGetStartedClick}>
           Get Started
         </PremiumButton>
@@ -288,29 +391,34 @@ const Header = ({ darkMode, toggleDarkMode }) => {
 
   return (
     <>
-      <StyledAppBar position="fixed" elevation={0} scrolled={scrolled}>
+      {/* Announcement Bar */}
+     
+      
+      <StyledAppBar position="fixed" elevation={0} scrolled={scrolled} sx={{ top: '36px' }}>
         <StyledToolbar>
           <Logo
             onClick={() => window.location.href = "/"}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
+ <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 'bold',
+              background: 'black',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             DreamTrax
-          </Logo>
+          </Typography>           </Logo>
 
           <Box sx={{ flexGrow: 1 }} />
 
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {navigationItems.map((item) => (
-                <NavButton
-                  key={item.label}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                >
-                  {item.label}
-                </NavButton>
-              ))}
+              
               
               <NavButton
                 onClick={handleServicesClick}
@@ -330,12 +438,31 @@ const Header = ({ darkMode, toggleDarkMode }) => {
                 Mentors
               </NavButton>
 
+              <NavButton
+                onClick={handleResourcesClick}
+                endIcon={<KeyboardArrowDownIcon />}
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
+              >
+                Resources
+              </NavButton>
+
               <IconButton 
                 onClick={toggleDarkMode}
                 sx={{ mx: 1, color: 'text.primary' }}
               >
                 {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
+
+              {/* Book Demo Button - Always visible */}
+              <DemoButton
+                onClick={handleBookDemo}
+                whileHover={{ y: -2, scale: 1.05 }}
+                whileTap={{ y: 0, scale: 0.95 }}
+                sx={{ mx: 1 }}
+              >
+                📅 Book Demo
+              </DemoButton>
 
               {isAuthenticated ? (
                 // Show user menu when authenticated
@@ -415,7 +542,10 @@ const Header = ({ darkMode, toggleDarkMode }) => {
         {serviceItems.map((item) => (
           <MenuItem 
             key={item.label} 
-            onClick={handleServicesClose}
+            onClick={() => {
+              handleServicesClose();
+              navigate(item.href);
+            }}
             sx={{ 
               py: 1.5,
               borderRadius: 2,
@@ -453,6 +583,45 @@ const Header = ({ darkMode, toggleDarkMode }) => {
             onClick={() => {
               handleMentorClose();
               navigate(item.href);
+            }}
+            sx={{ 
+              py: 1.5,
+              borderRadius: 2,
+              mx: 1,
+              mb: 0.5,
+              '&:hover': {
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              }
+            }}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+
+      {/* Resources Menu */}
+      <Menu
+        anchorEl={resourcesAnchor}
+        open={Boolean(resourcesAnchor)}
+        onClose={handleResourcesClose}
+        PaperProps={{
+          sx: {
+            mt: 1,
+            borderRadius: 3,
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(20px)',
+            minWidth: 200,
+          }
+        }}
+      >
+        {resourceItems.map((item) => (
+          <MenuItem 
+            key={item.label} 
+            onClick={() => {
+              handleResourcesClose();
+              // For now, just log - you can implement navigation later
+              console.log(`Navigate to ${item.href}`);
             }}
             sx={{ 
               py: 1.5,

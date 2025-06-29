@@ -13,6 +13,7 @@ import ModernExaminations from '../components/Student/ModernExaminations';
 import ModernAdvisoryNotes from '../components/Student/ModernAdvisoryNotes';
 import ModernLatestNews from '../components/Student/ModernLatestNews';
 import UserBookings from '../components/MeetingScheduler/UserBookings';
+import ResumeShortcuts from '../components/Student/ResumeShortcuts';
 import SessionManager from '../utils/sessionManager';
 
 // Clean white background
@@ -112,6 +113,8 @@ function StudentDashboard() {
                       exit={{ opacity: 0, y: -50 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
                     >
+                      <GlassSectionDivider />
+                      <ResumeShortcuts />
                       <GlassSectionDivider />
                       <ModernTrendingPaths />
                       <GlassSectionDivider />

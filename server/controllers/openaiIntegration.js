@@ -25,6 +25,35 @@ if (!token) {
   throw new Error("GITHUB_TOKEN environment variable is required");
 }
 
+// Validate token format
+if (!token.startsWith('ghp_') && !token.startsWith('ghu_') && !token.startsWith('ghs_')) {
+  console.error("Invalid GitHub token format. Expected format: ghp_, ghu_, or ghs_*");
+  throw new Error("Invalid GitHub token format");
+}
+
+// Function to validate token and check access
+async function validateTokenAccess() {
+  try {
+    const client = ModelClient(endpoint, new AzureKeyCredential(token));
+    console.log("Validating GitHub token access...");
+    
+    // Test with a simple catalog request
+    const response = await client.path("/catalog/models").get();
+    
+    if (response.status === '401') {
+      throw new Error("INVALID_TOKEN: GitHub token is invalid or expired");
+    } else if (response.status === '403') {
+      throw new Error("INSUFFICIENT_PERMISSIONS: GitHub token doesn't have required permissions for GitHub Models");
+    }
+    
+    console.log("Token validation successful");
+    return true;
+  } catch (error) {
+    console.error("Token validation failed:", error.message);
+    throw error;
+  }
+}
+
 // Function to fetch available models from the catalog
 async function getAvailableModels() {
   try {
@@ -67,7 +96,6 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
   });
 
   console.log("Response status:", response.status);
-  console.log("Response body:", response.body);
   
   if (isUnexpected(response)) {
     let errorBody;
@@ -79,6 +107,15 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
       errorBody = { error: { message: response.body } };
     }
     
+    // Handle authentication errors specifically
+    if (response.status === '401') {
+      throw new Error(`AUTHENTICATION_ERROR: GitHub token is invalid, expired, or lacks required permissions. Please check your GITHUB_TOKEN environment variable.`);
+    }
+    
+    if (response.status === '403') {
+      throw new Error(`PERMISSION_ERROR: GitHub token doesn't have access to GitHub Models. Please ensure your token has the required scopes.`);
+    }
+    
     if (errorBody.error?.code === "no_access" || 
         errorBody.error?.code === "unknown_model" ||
         (typeof response.body === 'string' && response.body.includes("Model not")) ||
@@ -86,7 +123,14 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
         response.status === '400' || response.status === '404') {
       throw new Error(`NO_ACCESS_TO_MODEL: ${modelToUse}`);
     }
-    throw new Error(`API Error: ${response.status} - ${response.body}`);
+    
+    console.error("API Error Details:", {
+      status: response.status,
+      body: response.body,
+      errorBody: errorBody
+    });
+    
+    throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorBody)}`);
   }
 
   if (!response.body || !response.body.choices || !response.body.choices[0]) {
@@ -99,6 +143,15 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
 async function makeAPIRequestWithFallback(client, messages) {
   let lastError;
   
+  // First validate token access
+  try {
+    await validateTokenAccess();
+  } catch (error) {
+    if (error.message.includes("INVALID_TOKEN") || error.message.includes("INSUFFICIENT_PERMISSIONS")) {
+      throw new Error(`Authentication failed: ${error.message}. Please check your GitHub token and ensure it has access to GitHub Models.`);
+    }
+  }
+  
   // Get available models dynamically
   const modelsToTry = await getAvailableModels();
   console.log(`Models to try: ${modelsToTry.join(', ')}`);
@@ -110,6 +163,12 @@ async function makeAPIRequestWithFallback(client, messages) {
     } catch (error) {
       console.log(`Failed with model ${modelToTry}:`, error.message);
       lastError = error;
+      
+      // If it's an authentication error, don't try other models
+      if (error.message.includes("AUTHENTICATION_ERROR") || 
+          error.message.includes("PERMISSION_ERROR")) {
+        throw error;
+      }
       
       // If it's not a model access issue, don't try other models
       if (!error.message.includes("NO_ACCESS_TO_MODEL")) {
@@ -127,6 +186,13 @@ function extractJSONFromResponse(content) {
   if (jsonMatch && jsonMatch[1]) {
     return jsonMatch[1].trim();
   }
+  
+  // Try to find JSON content without markdown code blocks
+  const simpleJsonMatch = content.match(/^\s*\[[\s\S]*\]\s*$/);
+  if (simpleJsonMatch) {
+    return content.trim();
+  }
+  
   // If no code block is found, return the original content
   return content;
 }
@@ -213,6 +279,15 @@ async function getCareerRecommendations(interests) {
       throw new Error("An unknown error occurred while fetching career recommendations");
     }
     
+    // Handle authentication errors specifically
+    if (err.message && (err.message.includes("AUTHENTICATION_ERROR") || 
+                       err.message.includes("PERMISSION_ERROR") || 
+                       err.message.includes("Authentication failed"))) {
+      console.error("GitHub token authentication failed. Token setup instructions:");
+      console.error(getTokenSetupInstructions());
+      throw new Error(`GitHub authentication error: ${err.message}. Please check your GitHub token configuration.`);
+    }
+    
     if (err.response) {
       console.error("Azure AI Inference API error response:", err.response);
     }
@@ -261,8 +336,32 @@ async function handleUserInput(userInput) {
   }
 }
 
+// Function to provide instructions for GitHub token setup
+function getTokenSetupInstructions() {
+  return `
+To fix the authentication issue, you need to create a new GitHub Personal Access Token with the proper permissions:
+
+1. Go to https://github.com/settings/tokens
+2. Click "Generate new token (classic)"
+3. Give it a descriptive name like "GitHub Models API Access"
+4. Select the following scopes:
+   - repo (Full control of private repositories)
+   - read:org (Read org and team membership)
+   - read:user (Read user profile data)
+   - user:email (Access user email addresses)
+
+5. Click "Generate token"
+6. Copy the token and update your .env file with the new GITHUB_TOKEN value
+7. Restart your server
+
+Note: GitHub Models is currently in beta and requires access to the GitHub Models marketplace.
+Make sure your GitHub account has access to GitHub Models.
+`;
+}
+
 // Export the functions
 export { 
   handleUserInput, 
-  getCareerRecommendations
+  getCareerRecommendations,
+  getTokenSetupInstructions
 };

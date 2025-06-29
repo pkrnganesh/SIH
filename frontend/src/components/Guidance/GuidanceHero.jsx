@@ -106,8 +106,6 @@ import {
 import { motion } from 'framer-motion';
 import { Search, Star, Clear } from '@mui/icons-material';
 
-const placeholderLogoUrl = 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png';
-
 const GuidanceHero = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -135,64 +133,90 @@ const GuidanceHero = ({ onSearch }) => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-      <Box sx={{ position: 'relative', px: { xs: 2, sm: 4 }, pt: 4, pb: 10, textAlign: 'center' }}>
+      <Box sx={{ 
+        position: 'relative', 
+        px: { xs: 2, sm: 4 }, 
+        py: { xs: 6, sm: 8, md: 12 }, 
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+        borderRadius: '0 0 40px 40px',
+        mb: 4
+      }}>
 
-        {/* Top-left name (can replace with logo later) */}
-        {/* <Box sx={{ position: 'absolute', left: 24, top: 24 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>DreamTrax</Typography>
-        </Box> */}
-
-        {/* Top-right placeholder logo */}
-        <Box sx={{ position: 'absolute', right: 24, top: 24 }}>
-          <img src={placeholderLogoUrl} alt="DreamTrax Logo" style={{ width: 48, height: 48 }} />
+        {/* Brand Logo/Name */}
+        <Box sx={{ position: 'absolute', left: { xs: 16, sm: 32 }, top: { xs: 16, sm: 32 } }}>
+         
         </Box>
 
         <Typography
-          variant="h2"
+          variant="h1"
           sx={{
-            fontWeight: 'bold',
-            fontSize: { xs: '2rem', sm: '3rem', md: '3.5rem' },
-            mb: 2,
+            fontWeight: 800,
+            fontSize: { xs: '2.5rem', sm: '4rem', md: '5rem' },
+            mb: 3,
+            background: 'linear-gradient(45deg, #1f2937, #4f46e5)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '-0.02em',
           }}
         >
-          <span style={{ color: '#7C3AED' }}>Unlock</span> Guidance
+          Mentors Guidance
         </Typography>
 
         <Typography
-          variant="h6"
+          variant="h5"
           color="text.secondary"
-          sx={{ mb: 4, fontSize: { xs: '1rem', sm: '1.2rem' } }}
+          sx={{ 
+            mb: 6, 
+            fontSize: { xs: '1.1rem', sm: '1.3rem' },
+            fontWeight: 400,
+            maxWidth: '600px',
+            mx: 'auto',
+            lineHeight: 1.6
+          }}
         >
-          Book sessions with unstoppable mentors across domains.
+          Connect with industry experts and accelerate your career journey with personalized mentorship
         </Typography>
 
         <Paper
-          elevation={3}
+          elevation={0}
           component="form"
           sx={{
             display: 'flex',
             alignItems: 'center',
-            px: 2,
-            py: 1,
-            borderRadius: '40px',
+            px: 3,
+            py: 2,
+            borderRadius: '60px',
             width: { xs: '100%', sm: '80%', md: '60%' },
             mx: 'auto',
-            mb: 4,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+            mb: 6,
+            border: '1px solid #e5e7eb',
+            backgroundColor: '#ffffff',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.15)',
+              transform: 'translateY(-2px)'
+            }
           }}
         >
           <InputBase
-            placeholder="Search mentors by specialization..."
+            placeholder="Search mentors by expertise, company, or skill..."
             value={searchTerm}
             onChange={handleInputChange}
             sx={{
               flex: 1,
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               ml: 1,
+              color: 'text.primary',
+              '&::placeholder': {
+                color: 'text.secondary'
+              }
             }}
           />
           {searchTerm && (
-            <IconButton onClick={clearSearch}>
+            <IconButton onClick={clearSearch} sx={{ mr: 1 }}>
               <Clear />
             </IconButton>
           )}
@@ -200,28 +224,62 @@ const GuidanceHero = ({ onSearch }) => {
             variant="contained"
             startIcon={<Star />}
             sx={{
-              borderRadius: '20px',
+              borderRadius: '40px',
               textTransform: 'none',
-              bgcolor: 'primary.main',
+              background: 'linear-gradient(45deg, #4f46e5, #06b6d4)',
               color: 'white',
-              px: 2,
-              mr: 1,
-              '&:hover': { bgcolor: 'primary.dark' },
+              px: 3,
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 600,
+              '&:hover': { 
+                background: 'linear-gradient(45deg, #3730a3, #0891b2)',
+                transform: 'translateY(-1px)'
+              },
+              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.4)'
             }}
           >
-            Match Me
+            Find Perfect Match
           </Button>
-          <IconButton>
-            {isSearching ? <CircularProgress size={20} /> : <Search />}
+          <IconButton sx={{ ml: 1 }}>
+            {isSearching ? <CircularProgress size={20} color="primary" /> : <Search />}
           </IconButton>
         </Paper>
 
-        <Typography
-          variant="subtitle1"
-          sx={{ fontWeight: 'bold', color: 'primary.dark', mt: 2 }}
-        >
-          2000+ Mentors Available
-        </Typography>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          gap: 4,
+          flexWrap: 'wrap'
+        }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5 }}>
+              2000+
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Expert Mentors
+            </Typography>
+          </Box>
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 0.5 }}>
+              50+
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Industries
+            </Typography>
+          </Box>
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 0.5 }}>
+              98%
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Success Rate
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     </motion.div>
   );

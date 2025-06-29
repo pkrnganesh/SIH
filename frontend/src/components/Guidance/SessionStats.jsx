@@ -1,9 +1,7 @@
 import React from 'react';
-import { Box, Typography, Chip, Avatar, Card, CardContent, Grid, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, Card, CardContent, Grid, Button } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Star, FormatQuote } from '@mui/icons-material';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { FormatQuote } from '@mui/icons-material';
 
 // Sample mentee reviews data
 const reviews = [
@@ -36,51 +34,139 @@ const SessionStats = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.4 }}
     >
-      <Box sx={{ my: 8, textAlign: 'center' }}>
-        {/* Heading Section */}
-        <Typography variant="h4" fontWeight="bold" gutterBottom>Mentee <span style={{ color: '#1976d2' }}>Reviews</span></Typography>
-        <Typography variant="body1" gutterBottom>Read real stories from mentees about their transformative journey.</Typography>
+      <Box sx={{ 
+        py: 8, 
+        px: { xs: 2, sm: 4 },
+        backgroundColor: '#f8fafc',
+        borderRadius: '40px',
+        mx: { xs: 2, sm: 4 },
+        mb: 6
+      }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography 
+            variant="h3" 
+            fontWeight="bold" 
+            sx={{ 
+              mb: 2,
+              color: 'text.primary'
+            }}
+          >
+            Success Stories
+          </Typography>
+          <Typography 
+            variant="h6" 
+            color="text.secondary"
+            sx={{ maxWidth: '600px', mx: 'auto' }}
+          >
+            Real transformations from mentees who achieved their career goals
+          </Typography>
+        </Box>
 
-        {/* Reviews Section */}
-        <Box sx={{ mt: 4, position: 'relative' }}>
-          {/* Arrow Navigation */}
-          <IconButton sx={{ position: 'absolute', left: 0, top: '50%' }}>
-            <ArrowBackIosIcon />
-          </IconButton>
-          <IconButton sx={{ position: 'absolute', right: 0, top: '50%' }}>
-            <ArrowForwardIosIcon />
-          </IconButton>
-
-          <Grid container spacing={3} sx={{ justifyContent: 'center' }}>
-            {reviews.map((review, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card sx={{ borderRadius: '15px', p: 3, boxShadow: 3 }}>
-                  <CardContent>
-                    {/* Quote Icon */}
-                    <Box sx={{ textAlign: 'left', mb: 2 }}>
-                      <FormatQuote sx={{ fontSize: '40px', color: '#f4b400' }} />
+        <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
+          {reviews.map((review, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+              >
+                <Card 
+                  sx={{ 
+                    borderRadius: '20px', 
+                    p: 3, 
+                    height: '100%',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.15)',
+                      transform: 'translateY(-5px)'
+                    }
+                  }}
+                >
+                  <CardContent sx={{ p: 3 }}>
+                    <Box sx={{ mb: 3 }}>
+                      <FormatQuote sx={{ 
+                        fontSize: '32px', 
+                        color: 'primary.main',
+                        opacity: 0.7
+                      }} />
                     </Box>
 
-                    {/* Feedback Text */}
-                    <Typography variant="body1" sx={{ color: '#555', height: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        color: 'text.primary', 
+                        lineHeight: 1.6,
+                        mb: 3,
+                        fontSize: '0.95rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 4,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
                       {review.feedback}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#1976d2', mt: 2 }}>
-                      Read more &#x2192;
-                    </Typography>
+                    
+                    <Button
+                      variant="text"
+                      sx={{ 
+                        color: 'primary.main',
+                        textTransform: 'none',
+                        p: 0,
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        '&:hover': {
+                          backgroundColor: 'transparent',
+                          color: 'primary.dark'
+                        }
+                      }}
+                    >
+                      Read full story →
+                    </Button>
 
-                    {/* Avatar and Name */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 3 }}>
-                      <Avatar src={review.avatar} sx={{ width: 40, height: 40, mr: 2 }} />
-                      <Typography variant="body1" fontWeight="bold">{review.name}</Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      mt: 4,
+                      pt: 3,
+                      borderTop: '1px solid #f1f5f9'
+                    }}>
+                      <Avatar 
+                        src={review.avatar} 
+                        sx={{ 
+                          width: 48, 
+                          height: 48, 
+                          mr: 2,
+                          border: '2px solid #e2e8f0'
+                        }} 
+                      />
+                      <Box>
+                        <Typography 
+                          variant="subtitle1" 
+                          fontWeight="bold"
+                          sx={{ color: 'text.primary', fontSize: '0.95rem' }}
+                        >
+                          {review.name}
+                        </Typography>
+                        <Typography 
+                          variant="body2" 
+                          color="text.secondary"
+                          sx={{ fontSize: '0.8rem' }}
+                        >
+                          Verified Mentee
+                        </Typography>
+                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-        
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </motion.div>
   );

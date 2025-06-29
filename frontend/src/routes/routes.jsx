@@ -10,6 +10,10 @@ import MentorDashboard from "../pages/MentorDashboard";
 import MentorLogin from "../pages/MentorLogin";
 import MentorSignup from "../pages/MentorSignup";
 import GuidancePage from "../pages/GuidancePage";
+import ResumeBuilder from "../pages/ResumeBuilder";
+import ResumeEditor from "../pages/ResumeEditor";
+import InterviewPrep from "../pages/InterviewPrep";
+import InterviewSession from "../pages/InterviewSession";
 
 export function HomeRoutes() {
   return (
@@ -26,6 +30,10 @@ export function HomeRoutes() {
         <Route path="/mentor-dashboard" element={<MentorDashboard />} />
         <Route path="/mentor-login" element={<MentorLogin />} />
         <Route path="/mentor-signup" element={<MentorSignup />} />
+        <Route path="/resume-builder" element={<ResumeBuilder />} />
+        <Route path="/resume-editor" element={<ResumeEditor />} />
+        <Route path="/interview-prep" element={<InterviewPrep />} />
+        <Route path="/interview-session" element={<InterviewSession />} />
 
       </Routes>
     </Router>

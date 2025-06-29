@@ -21,6 +21,7 @@
     "express": "^4.21.0",
     "firebase-admin": "^12.5.0",
     "googleapis": "^105.0.0",
+    "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.6.0",
     "mongoose": "^8.3.3",
     "nodemailer": "^6.10.1",
