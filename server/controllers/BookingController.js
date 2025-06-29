@@ -4,13 +4,14 @@ const Mentor = require('../models/MentorModel');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const { v4: uuidv4 } = require('uuid');
+const createMeetEvent = require('../utils/googleCalendar');
 
 // Setup Gmail SMTP
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'yourgmail@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'your-gmail-app-password'
+    pass: process.env.EMAIL_PASS || 'your-gmail-app-password'
   }
 });
 
@@ -117,29 +118,26 @@ const sendSMSNotification = async (phoneNumber, message) => {
 // Book a new session
 const bookSession = async (req, res) => {
   try {
-    const { 
-      studentEmail, 
-      mentorEmail, 
-      mentorName, 
-      scheduledDate, 
-      scheduledTime, 
-      sessionTopic, 
-      sessionDuration = 60 
+    const {
+      studentEmail,
+      mentorEmail,
+      mentorName,
+      scheduledDate,
+      scheduledTime,
+      sessionTopic,
+      sessionDuration = 60
     } = req.body;
 
-    // Validate required fields
     if (!studentEmail || !mentorEmail || !mentorName) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Student email, mentor email, and mentor name are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Student email, mentor email, and mentor name are required'
       });
     }
 
-    // Generate unique booking ID and meeting link
     const bookingId = uuidv4();
-    const meetLink = `https://meet.google.com/${uuidv4().slice(0, 10)}-${uuidv4().slice(0, 3)}`;
 
-    // Get student information and phone number
+    // Get student information first (before using studentName)
     let studentName = 'Student';
     let studentPhone = null;
     try {
@@ -152,15 +150,22 @@ const bookSession = async (req, res) => {
       console.log('Could not fetch student details:', error.message);
     }
 
-    // Get mentor information and phone number
-    let mentorPhone = null;
+    // Generate Google Meet link using Calendar API
+    let meetLink = '';
     try {
-      const mentor = await Mentor.findOne({ mentor_email: mentorEmail });
-      if (mentor) {
-        mentorPhone = mentor.mentor_phonenumber;
-      }
-    } catch (error) {
-      console.log('Could not fetch mentor details:', error.message);
+      const startTime = new Date(`${scheduledDate}T${scheduledTime}:00+05:30`).toISOString();
+      const endTime = new Date(new Date(startTime).getTime() + sessionDuration * 60000).toISOString();
+      const calendarEvent = await createMeetEvent(
+        `Career Guidance Session: ${studentName} with ${mentorName}`,
+        sessionTopic || 'General Career Guidance',
+        startTime,
+        endTime ,
+        [studentEmail, mentorEmail] // ✅ pass a simple array
+      );
+      meetLink = calendarEvent.hangoutLink;
+    } catch (err) {
+      console.error('Google Meet creation failed:', err.message);
+      return res.status(500).json({ success: false, message: 'Failed to create Google Meet link' });
     }
 
     // Create booking record
@@ -179,19 +184,17 @@ const bookSession = async (req, res) => {
 
     await booking.save();
 
-    // Prepare email content
-    const sessionDateTime = scheduledDate && scheduledTime 
+    const sessionDateTime = scheduledDate && scheduledTime
       ? `${new Date(scheduledDate).toLocaleDateString()} at ${scheduledTime}`
       : 'To be scheduled';
 
     const mailOptions = {
-      from: '"DreamTrax Career Guidance" <' + (process.env.EMAIL_USER || 'yourgmail@gmail.com') + '>',
+      from: `"DreamTrax Career Guidance" <${process.env.EMAIL_USER || 'yourgmail@gmail.com'}>`,
       to: [studentEmail, mentorEmail],
       subject: `Session Booked: ${studentName} & ${mentorName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #4CAF50; text-align: center;">🎉 Session Successfully Booked!</h2>
-          
           <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Session Details:</h3>
             <p><strong>Student:</strong> ${studentName} (${studentEmail})</p>
@@ -201,14 +204,11 @@ const bookSession = async (req, res) => {
             <p><strong>Topic:</strong> ${sessionTopic || 'General Career Guidance'}</p>
             <p><strong>Booking ID:</strong> ${bookingId}</p>
           </div>
-
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${meetLink}" 
-               style="background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
+            <a href="${meetLink}" style="background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
               📹 Join Meeting
             </a>
           </div>
-
           <div style="background-color: #fffbf0; border-left: 4px solid #ff9800; padding: 10px; margin: 20px 0;">
             <p><strong>📝 Next Steps:</strong></p>
             <ul>
@@ -218,7 +218,6 @@ const bookSession = async (req, res) => {
               <li>You'll receive a reminder 24 hours before the session</li>
             </ul>
           </div>
-
           <p style="text-align: center; color: #666; font-size: 14px; margin-top: 30px;">
             Best of luck with your career guidance session!<br>
             - DreamTrax Team
@@ -234,7 +233,15 @@ const bookSession = async (req, res) => {
 
     try {
       await transporter.sendMail(mailOptions);
-      emailResult.success = true;
+      res.json({
+        success: true,
+        message: 'Session booked successfully!',
+        booking: {
+          bookingId,
+          meetLink,
+          scheduledDate: sessionDateTime
+        }
+      });
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
       emailResult.error = emailError.message;
@@ -271,10 +278,16 @@ Good luck with your session! 🚀`;
     }
 
     // Send WhatsApp and SMS to mentor
-    if (mentorPhone) {
-      mentorNotifications.whatsapp = await sendWhatsAppNotification(mentorPhone, whatsappMessage);
-      mentorNotifications.sms = await sendSMSNotification(mentorPhone, smsMessage);
-    }
+let mentorPhone = null;
+try {
+  const mentor = await Mentor.findOne({ mentor_email: mentorEmail });
+  if (mentor) {
+    mentorPhone = mentor.mentor_phonenumber;
+  }
+} catch (error) {
+  console.log('Could not fetch mentor details:', error.message);
+}
+
 
     // Prepare response
     const response = {
@@ -300,14 +313,14 @@ Good luck with your session! 🚀`;
       }
     };
 
-    res.json(response);
+    // res.json(response);
 
   } catch (error) {
     console.error('Booking error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to book session', 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      message: 'Failed to book session',
+      error: error.message
     });
   }
 };

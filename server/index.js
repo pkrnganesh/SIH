@@ -10,9 +10,10 @@ const intermediateCarrierPathRoutes = require('./routes/intermediateCarrierPathR
 const collegeRoutes = require('./routes/IntermediateCollegeRoutes'); // Adjust this path to match your routes
 const Intermediateexams=require('./routes/IntermediateExamRoutes');
 const BookingRoutes = require('./routes/BookingRoutes');
-const NotificationController = require('./routes/NotiRoutes');
+const NotificationRoutes = require('./routes/NotiRoutes'); // Adjust this path to match your routes
 const ResumeRoutes = require('./routes/ResumeRoutes');
 const InterviewRoutes = require('./routes/InterviewRoutes');
+
 
 const Mentorroutes = require('./routes/MentorRoutes');
 dotenv.config();
