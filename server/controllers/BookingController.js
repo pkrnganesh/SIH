@@ -2,6 +2,7 @@ const Booking = require('../models/BookingModel');
 const User = require('../models/UserModel');
 const Mentor = require('../models/MentorModel');
 const nodemailer = require('nodemailer');
+const twilio = require('twilio');
 const { v4: uuidv4 } = require('uuid');
 const createMeetEvent = require('../utils/googleCalendar');
 
@@ -10,9 +11,109 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'yourgmail@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-gmail-app-password'
+    pass: process.env.EMAIL_PASSWORD || 'your-gmail-app-password'
   }
 });
+
+// Verify email configuration on startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Email configuration error:', error.message);
+    console.log('Please check your EMAIL_USER and EMAIL_PASSWORD environment variables');
+    console.log('For Gmail, you need to use an App Password, not your regular password');
+  } else {
+    console.log('Email server is ready to send messages');
+  }
+});
+
+// Initialize Twilio client for WhatsApp and SMS
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// Helper function to format phone number with Indian country code
+const formatPhoneNumber = (phoneNumber) => {
+  if (!phoneNumber) return null;
+  
+  let formatted = phoneNumber.toString();
+  
+  // Remove any + prefix temporarily
+  if (formatted.startsWith('+')) {
+    formatted = formatted.substring(1);
+  }
+  
+  // If the number doesn't start with 91 (Indian country code), add it
+  if (!formatted.startsWith('91')) {
+    formatted = '91' + formatted;
+  }
+  
+  return '+' + formatted;
+};
+
+// Helper function to send WhatsApp notification
+const sendWhatsAppNotification = async (phoneNumber, message) => {
+  try {
+    if (!phoneNumber) return { success: false, error: 'No phone number provided' };
+    
+    const formattedNumber = formatPhoneNumber(phoneNumber);
+    const whatsappTo = `whatsapp:${formattedNumber}`;
+    
+    const whatsappMessage = await twilioClient.messages.create({
+      body: message,
+      from: 'whatsapp:+14155238886', // Twilio Sandbox number
+      to: whatsappTo
+    });
+
+    console.log('WhatsApp notification sent successfully:', {
+      messageSid: whatsappMessage.sid,
+      to: whatsappMessage.to,
+      status: whatsappMessage.status
+    });
+    
+    return {
+      success: true,
+      messageSid: whatsappMessage.sid,
+      status: whatsappMessage.status
+    };
+  } catch (error) {
+    console.error('Failed to send WhatsApp notification:', error.message);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
+
+// Helper function to send SMS notification
+const sendSMSNotification = async (phoneNumber, message) => {
+  try {
+    if (!phoneNumber) return { success: false, error: 'No phone number provided' };
+    
+    const formattedNumber = formatPhoneNumber(phoneNumber);
+    
+    const smsMessage = await twilioClient.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: formattedNumber
+    });
+
+    console.log('SMS notification sent successfully:', {
+      messageSid: smsMessage.sid,
+      to: smsMessage.to,
+      status: smsMessage.status
+    });
+    
+    return {
+      success: true,
+      messageSid: smsMessage.sid,
+      status: smsMessage.status
+    };
+  } catch (error) {
+    console.error('Failed to send SMS notification:', error.message);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+};
 
 // Book a new session
 const bookSession = async (req, res) => {
@@ -38,10 +139,12 @@ const bookSession = async (req, res) => {
 
     // Get student information first (before using studentName)
     let studentName = 'Student';
+    let studentPhone = null;
     try {
       const student = await User.findOne({ user_email: studentEmail });
       if (student) {
         studentName = student.user_name;
+        studentPhone = student.user_phonenumber;
       }
     } catch (error) {
       console.log('Could not fetch student details:', error.message);
@@ -122,6 +225,11 @@ const bookSession = async (req, res) => {
       `
     };
 
+    // Send email notification
+    let emailResult = { success: false };
+    let studentNotifications = { whatsapp: null, sms: null };
+    let mentorNotifications = { whatsapp: null, sms: null };
+
     try {
       await transporter.sendMail(mailOptions);
       res.json({
@@ -135,16 +243,70 @@ const bookSession = async (req, res) => {
       });
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
-      res.json({
-        success: true,
-        message: 'Session booked successfully, but email notification failed',
-        booking: {
-          bookingId,
-          meetLink,
-          scheduledDate: sessionDateTime
-        }
-      });
+      emailResult.error = emailError.message;
     }
+
+    // Prepare WhatsApp and SMS messages
+    const whatsappMessage = `🎉 Meeting Successfully Booked!
+
+📅 Session Details:
+• Student: ${studentName}
+• Mentor: ${mentorName}
+• Date: ${sessionDateTime}
+• Duration: ${sessionDuration} minutes
+• Topic: ${sessionTopic || 'General Career Guidance'}
+
+🔗 Meeting Link: ${meetLink}
+
+📋 Booking ID: ${bookingId}
+
+📝 Next Steps:
+✅ Save this meeting link
+✅ Join at scheduled time
+✅ Prepare your questions
+✅ Check your email for more details
+
+Good luck with your session! 🚀`;
+
+    const smsMessage = `Meeting Booked! ${studentName} & ${mentorName} - ${sessionDateTime}. Meeting Link: ${meetLink} Booking ID: ${bookingId}`;
+
+    // Send WhatsApp and SMS to student
+    if (studentPhone) {
+      studentNotifications.whatsapp = await sendWhatsAppNotification(studentPhone, whatsappMessage);
+      studentNotifications.sms = await sendSMSNotification(studentPhone, smsMessage);
+    }
+
+    // Send WhatsApp and SMS to mentor
+    if (mentorPhone) {
+      mentorNotifications.whatsapp = await sendWhatsAppNotification(mentorPhone, whatsappMessage);
+      mentorNotifications.sms = await sendSMSNotification(mentorPhone, smsMessage);
+    }
+
+    // Prepare response
+    const response = {
+      success: true,
+      message: 'Session booked successfully!',
+      booking: {
+        bookingId,
+        meetLink,
+        scheduledDate: sessionDateTime
+      },
+      notifications: {
+        email: emailResult,
+        student: {
+          phone: studentPhone ? formatPhoneNumber(studentPhone) : 'No phone number found',
+          whatsapp: studentNotifications.whatsapp,
+          sms: studentNotifications.sms
+        },
+        mentor: {
+          phone: mentorPhone ? formatPhoneNumber(mentorPhone) : 'No phone number found',
+          whatsapp: mentorNotifications.whatsapp,
+          sms: mentorNotifications.sms
+        }
+      }
+    };
+
+    res.json(response);
 
   } catch (error) {
     console.error('Booking error:', error);

@@ -89,7 +89,7 @@ function Landing() {
               <Suspense fallback={<PremiumLoader />}>
                 <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
                 
-                <Box component="main">
+                <Box component="main" sx={{ marginTop: '80px' }}>
                   <Hero />
                   <Features />
                   <HowItWorks />

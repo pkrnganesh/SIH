@@ -1,6 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline, Container } from '@mui/material';
+import { CssBaseline, Container, Box } from '@mui/material';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -35,11 +35,13 @@ function GuidancePage() {
             <Container maxWidth="xl">
               <Suspense fallback={<div>Loading...</div>}>
                 <Header />
-                <GuidanceHero onSearch={handleSearch} />
-                <MentorList searchTerm={searchTerm} />
-                <SessionStats />
-                <FAQ />
-                <CompanyLogos />
+                <Box sx={{ marginTop: '80px' }}>
+                  <GuidanceHero onSearch={handleSearch} />
+                  <MentorList searchTerm={searchTerm} />
+                  <SessionStats />
+                  <FAQ />
+                  <CompanyLogos />
+                </Box>
                 <Footer />
               </Suspense>
             </Container>
