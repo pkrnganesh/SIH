@@ -1,9 +1,10 @@
 const { google } = require('googleapis');
-
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
-const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
+require('dotenv').config();
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+console.log('🧪 REFRESH_TOKEN:', REFRESH_TOKEN ? '✅ FOUND' : '❌ MISSING');
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,

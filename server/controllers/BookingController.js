@@ -3,6 +3,7 @@ const User = require('../models/UserModel');
 const Mentor = require('../models/MentorModel');
 const nodemailer = require('nodemailer');
 const { v4: uuidv4 } = require('uuid');
+const createMeetEvent = require('../utils/googleCalendar');
 
 // Setup Gmail SMTP
 const transporter = nodemailer.createTransport({
@@ -16,29 +17,26 @@ const transporter = nodemailer.createTransport({
 // Book a new session
 const bookSession = async (req, res) => {
   try {
-    const { 
-      studentEmail, 
-      mentorEmail, 
-      mentorName, 
-      scheduledDate, 
-      scheduledTime, 
-      sessionTopic, 
-      sessionDuration = 60 
+    const {
+      studentEmail,
+      mentorEmail,
+      mentorName,
+      scheduledDate,
+      scheduledTime,
+      sessionTopic,
+      sessionDuration = 60
     } = req.body;
 
-    // Validate required fields
     if (!studentEmail || !mentorEmail || !mentorName) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Student email, mentor email, and mentor name are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Student email, mentor email, and mentor name are required'
       });
     }
 
-    // Generate unique booking ID and meeting link
     const bookingId = uuidv4();
-    const meetLink = `https://meet.google.com/${uuidv4().slice(0, 10)}-${uuidv4().slice(0, 3)}`;
 
-    // Get student information
+    // Get student information first (before using studentName)
     let studentName = 'Student';
     try {
       const student = await User.findOne({ user_email: studentEmail });
@@ -47,6 +45,23 @@ const bookSession = async (req, res) => {
       }
     } catch (error) {
       console.log('Could not fetch student details:', error.message);
+    }
+
+    // Generate Google Meet link using Calendar API
+    let meetLink = '';
+    try {
+      const startTime = new Date(`${scheduledDate}T${scheduledTime}:00+05:30`).toISOString();
+      const endTime = new Date(new Date(startTime).getTime() + sessionDuration * 60000).toISOString();
+      const calendarEvent = await createMeetEvent(
+        `Career Guidance Session: ${studentName} with ${mentorName}`,
+        sessionTopic || 'General Career Guidance',
+        startTime,
+        endTime
+      );
+      meetLink = calendarEvent.hangoutLink;
+    } catch (err) {
+      console.error('Google Meet creation failed:', err.message);
+      return res.status(500).json({ success: false, message: 'Failed to create Google Meet link' });
     }
 
     // Create booking record
@@ -65,19 +80,17 @@ const bookSession = async (req, res) => {
 
     await booking.save();
 
-    // Prepare email content
-    const sessionDateTime = scheduledDate && scheduledTime 
+    const sessionDateTime = scheduledDate && scheduledTime
       ? `${new Date(scheduledDate).toLocaleDateString()} at ${scheduledTime}`
       : 'To be scheduled';
 
     const mailOptions = {
-      from: '"DreamTrax Career Guidance" <' + (process.env.EMAIL_USER || 'yourgmail@gmail.com') + '>',
+      from: `"DreamTrax Career Guidance" <${process.env.EMAIL_USER || 'yourgmail@gmail.com'}>`,
       to: [studentEmail, mentorEmail],
       subject: `Session Booked: ${studentName} & ${mentorName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #4CAF50; text-align: center;">🎉 Session Successfully Booked!</h2>
-          
           <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Session Details:</h3>
             <p><strong>Student:</strong> ${studentName} (${studentEmail})</p>
@@ -87,14 +100,11 @@ const bookSession = async (req, res) => {
             <p><strong>Topic:</strong> ${sessionTopic || 'General Career Guidance'}</p>
             <p><strong>Booking ID:</strong> ${bookingId}</p>
           </div>
-
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${meetLink}" 
-               style="background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
+            <a href="${meetLink}" style="background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; display: inline-block;">
               📹 Join Meeting
             </a>
           </div>
-
           <div style="background-color: #fffbf0; border-left: 4px solid #ff9800; padding: 10px; margin: 20px 0;">
             <p><strong>📝 Next Steps:</strong></p>
             <ul>
@@ -104,7 +114,6 @@ const bookSession = async (req, res) => {
               <li>You'll receive a reminder 24 hours before the session</li>
             </ul>
           </div>
-
           <p style="text-align: center; color: #666; font-size: 14px; margin-top: 30px;">
             Best of luck with your career guidance session!<br>
             - DreamTrax Team
@@ -113,11 +122,10 @@ const bookSession = async (req, res) => {
       `
     };
 
-    // Send email notification
     try {
       await transporter.sendMail(mailOptions);
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: 'Session booked successfully!',
         booking: {
           bookingId,
@@ -127,8 +135,8 @@ const bookSession = async (req, res) => {
       });
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: 'Session booked successfully, but email notification failed',
         booking: {
           bookingId,
@@ -140,10 +148,10 @@ const bookSession = async (req, res) => {
 
   } catch (error) {
     console.error('Booking error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to book session', 
-      error: error.message 
+    res.status(500).json({
+      success: false,
+      message: 'Failed to book session',
+      error: error.message
     });
   }
 };

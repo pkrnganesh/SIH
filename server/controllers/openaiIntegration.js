@@ -1,14 +1,13 @@
-import { default as ModelClient } from "@azure-rest/ai-inference";
-import { isUnexpected } from "@azure-rest/ai-inference";
-import { AzureKeyCredential } from "@azure/core-auth";
-import CarrierModel from "../models/CarrierModel.js";
+const { isUnexpected } = require("@azure-rest/ai-inference");
+const createClient = require("@azure-rest/ai-inference").default;
+const { AzureKeyCredential } = require("@azure/core-auth");
+const CarrierModel = require("../models/CarrierModel.js");
 
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 dotenv.config();
 
 const token = process.env["GITHUB_TOKEN"];
 const endpoint = "https://models.github.ai/inference";
-// Updated models with correct publisher/model_name format for GitHub Models
 const availableModels = [
   "openai/gpt-4o-mini",
   "openai/gpt-4o", 
@@ -17,36 +16,34 @@ const availableModels = [
   "microsoft/Phi-3-mini-4k-instruct",
   "microsoft/Phi-3-small-8k-instruct"
 ];
-let model = availableModels[0]; // Start with the first one
+let model = availableModels[0];
 
-// Add validation for required environment variables
 if (!token) {
   console.error("GITHUB_TOKEN environment variable is not set");
   throw new Error("GITHUB_TOKEN environment variable is required");
 }
 
-// Function to fetch available models from the catalog
 async function getAvailableModels() {
   try {
-    const client = ModelClient(
+    const client = createClient(
       endpoint,
       new AzureKeyCredential(token),
     );
-    
+
     console.log("Fetching available models from catalog...");
     const response = await client.path("/catalog/models").get();
-    
+
     if (isUnexpected(response)) {
       console.log("Could not fetch model catalog, using default models");
       return availableModels;
     }
-    
+
     const models = response.body.data || [];
     const modelNames = models
       .map(model => model.id || model.name)
       .filter(name => name && (name.includes('gpt') || name.includes('llama') || name.includes('phi')))
-      .slice(0, 5); // Limit to first 5 relevant models
-    
+      .slice(0, 5);
+
     console.log("Available models from catalog:", modelNames);
     return modelNames.length > 0 ? modelNames : availableModels;
   } catch (error) {
@@ -68,17 +65,15 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
 
   console.log("Response status:", response.status);
   console.log("Response body:", response.body);
-  
+
   if (isUnexpected(response)) {
     let errorBody;
     try {
-      // Try to parse as JSON first
       errorBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
     } catch (parseError) {
-      // If it's not JSON, use the raw response
       errorBody = { error: { message: response.body } };
     }
-    
+
     if (errorBody.error?.code === "no_access" || 
         errorBody.error?.code === "unknown_model" ||
         (typeof response.body === 'string' && response.body.includes("Model not")) ||
@@ -98,11 +93,10 @@ async function makeAPIRequest(client, messages, modelToUse = model) {
 
 async function makeAPIRequestWithFallback(client, messages) {
   let lastError;
-  
-  // Get available models dynamically
+
   const modelsToTry = await getAvailableModels();
   console.log(`Models to try: ${modelsToTry.join(', ')}`);
-  
+
   for (const modelToTry of modelsToTry) {
     try {
       console.log(`Attempting to use model: ${modelToTry}`);
@@ -110,24 +104,21 @@ async function makeAPIRequestWithFallback(client, messages) {
     } catch (error) {
       console.log(`Failed with model ${modelToTry}:`, error.message);
       lastError = error;
-      
-      // If it's not a model access issue, don't try other models
+
       if (!error.message.includes("NO_ACCESS_TO_MODEL")) {
         throw error;
       }
     }
   }
-  
+
   throw new Error(`No available models found. Tried: ${modelsToTry.join(', ')}. Last error: ${lastError.message}`);
 }
 
 function extractJSONFromResponse(content) {
-  // Try to find JSON content within markdown code blocks
   const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
   if (jsonMatch && jsonMatch[1]) {
     return jsonMatch[1].trim();
   }
-  // If no code block is found, return the original content
   return content;
 }
 
@@ -136,21 +127,18 @@ async function getCareerRecommendations(interests) {
     console.log("Fetching career data from database...");
     const dbdata = await CarrierModel.find();
     console.log(`Found ${dbdata.length} careers in the database.`);
-    
+
     if (!dbdata || dbdata.length === 0) {
       throw new Error("No career data found in the database.");
     }
 
     console.log("Initializing Azure AI Inference client...");
-    const client = ModelClient(
+    const client = createClient(
       endpoint,
       new AzureKeyCredential(token),
     );
 
-    // Ensure interests is always an array
     let interestsArray = Array.isArray(interests) ? interests : [interests];
-
-    // If interests is still empty, use a default value
     if (interestsArray.length === 0) {
       console.log("No valid interests provided. Using general career exploration prompt.");
       interestsArray = ["general career exploration"];
@@ -187,7 +175,6 @@ async function getCareerRecommendations(interests) {
       throw new Error("Failed to parse career recommendations from API response");
     }
 
-    // Enhance recommendations with additional data from the database
     const enhancedRecommendations = recommendations.map(rec => {
       const fullData = dbdata.find(career => career.carrier_id === rec.id) || {};
       return {
@@ -206,23 +193,20 @@ async function getCareerRecommendations(interests) {
     console.error("Error type:", typeof err);
     console.error("Error:", err);
     console.error("Error stack:", err?.stack);
-    
-    // Handle case where err is undefined or null
+
     if (!err) {
       console.error("Undefined or null error received");
       throw new Error("An unknown error occurred while fetching career recommendations");
     }
-    
+
     if (err.response) {
       console.error("Azure AI Inference API error response:", err.response);
     }
-    
-    // Check if it's a network error
+
     if (err.code) {
       console.error("Error code:", err.code);
     }
-    
-    // Safely access error message
+
     const errorMessage = err.message || err.toString() || "Unknown error";
     throw new Error(`Error fetching career recommendations: ${errorMessage}`);
   }
@@ -231,7 +215,7 @@ async function getCareerRecommendations(interests) {
 async function handleUserInput(userInput) {
   try {
     console.log("Initializing Azure AI Inference client for interest extraction...");
-    const client = ModelClient(
+    const client = createClient(
       endpoint,
       new AzureKeyCredential(token),
     );
@@ -261,8 +245,7 @@ async function handleUserInput(userInput) {
   }
 }
 
-// Export the functions
-export { 
+module.exports = { 
   handleUserInput, 
   getCareerRecommendations
 };
